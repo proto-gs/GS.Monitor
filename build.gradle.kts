@@ -11,8 +11,9 @@ kotlin {
 
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
-        vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.MICROSOFT)
+
     }
+
 
     jvm("desktop") {
         withJava()
@@ -36,15 +37,28 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
-            targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe)
-            packageName = "GS.Monitor"
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
+            )
+            packageName = "GS-Monitor"
             packageVersion = "1.0.0"
             vendor = "G. Smerdov"
+
+
+            modules("java.instrument", "java.management", "java.naming", "java.sql", "java.xml", "java.desktop", "jdk.crypto.ec")
 
             windows {
                 menu = true
                 shortcut = true
                 dirChooser = true
+                iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
+            }
+
+            linux {
+                shortcut = true
+                menuGroup = "Development"
+                appCategory = "Utility"
                 iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
             }
         }
