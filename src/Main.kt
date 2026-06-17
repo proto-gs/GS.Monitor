@@ -1,29 +1,26 @@
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -32,32 +29,37 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.draw.clip
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.io.IOException
-import androidx.compose.foundation.isSystemInDarkTheme
 import java.awt.Cursor
-import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.res.painterResource
+import java.io.IOException
 
 
-const val VERSION = "1.0"
+const val VERSION = "1.0.1"
+
 fun main() = application {
+    // 1. ИСПРАВЛЕНО ДЛЯ ДОКА LINUX: Задаем жесткий идентификатор для графического движка Skiko.
+    // Именно это свойство заставит Gnome связать окно с ярлыком "gs-monitor", уберет шестеренку и вернет синюю иконку!
+    System.setProperty("skiko.linux.wmClass", "gs-monitor")
+
+    // Вспомогательные системные имена
+    System.setProperty("compose.application.configure.id", "gs-monitor")
+    System.setProperty("apple.awt.application.name", "GS.Monitor")
+
     val windowState = rememberWindowState(size = DpSize(850.dp, 650.dp))
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
         title = "GS.Monitor",
-
-        icon = painterResource("icon.ico"),
+        icon = painterResource("icon.png"),
         undecorated = false,
         transparent = false
     ) {
+        // Дальше ваш стандартный код LaunchedEffect и вся остальная верстка...
+
+
+
 
         LaunchedEffect(Unit) {
             try {
@@ -67,6 +69,8 @@ fun main() = application {
             } catch (e: Exception) {
             }
         }
+
+
 
         var appThemeSetting by remember { mutableStateOf("system") }
         val isDarkTheme = when (appThemeSetting) {
@@ -86,7 +90,7 @@ fun main() = application {
 
                     Row(modifier = Modifier.fillMaxSize()) {
 
-                        
+
                         Column(
                             modifier = Modifier
                                 .width(sidebarWidth)
@@ -97,7 +101,7 @@ fun main() = application {
                         ) {
                             Spacer(modifier = Modifier.height(8.dp))
 
-                           
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -131,7 +135,7 @@ fun main() = application {
                                 }
                             }
 
-                           
+
                             if (!isSidebarExpanded) {
                                 IconButton(
                                     onClick = { isSidebarExpanded = true },
@@ -144,7 +148,7 @@ fun main() = application {
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                           
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -172,7 +176,7 @@ fun main() = application {
                                 }
                             }
 
-                          
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -200,7 +204,7 @@ fun main() = application {
                                 }
                             }
 
-                           
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -227,7 +231,7 @@ fun main() = application {
                                     )
                                 }
                             }
-                        } 
+                        }
 
 
 
@@ -271,7 +275,7 @@ fun MainAppScreen(
         ),
         label = "global_screen_fade"
     )
-    
+
     var isBottomSheetOpen by remember { mutableStateOf(false) }
     var isWelcomeSettingsOpen by remember { mutableStateOf(false) }
     var isScanSettingsOpen by remember { mutableStateOf(false) }
@@ -319,7 +323,7 @@ fun MainAppScreen(
     val switchView: (String) -> Unit = { target ->
         fadeVal = 1.0f
         if (target == "main") {
-            onTabChange("search") 
+            onTabChange("search")
         } else if (target == "welcome") {
             onTabChange("home")
         }
@@ -381,61 +385,70 @@ fun MainAppScreen(
             }
         }
     }
-   
+
     var searchQueryInput by remember { mutableStateOf("") }
     val searchResultsList = remember { mutableStateListOf<String>() }
     var isSearchLoading by remember { mutableStateOf(false) }
 
     val runSearch: () -> Unit = {
-        val query = searchQueryInput.trim()
+        val query = searchQueryInput.trim().lowercase().replace(" ", "")
         if (query.isNotEmpty()) {
             isSearchLoading = true
             searchResultsList.clear()
 
             scope.launch(Dispatchers.IO) {
-                val client = OkHttpClient.Builder()
-                    .connectTimeout(requestTimeoutSetting.toLong(), java.util.concurrent.TimeUnit.SECONDS)
-                    .build()
+                // Список самых популярных доменных зон для проверки
+                val topExtensions = listOf("com", "org", "net", "ru", "io", "me", "co", "cc", "app", "dev")
+                val activeDomains = mutableListOf<String>()
 
-                
-                val encodedQuery = java.net.URLEncoder.encode(query, "UTF-8")
-                val searchUrl = "https://duckduckgo.com"
+                // Создаем список потенциальных адресов (например: microsoft.com, microsoft.org ...)
+                val candidateUrls = topExtensions.map { ext -> "$query.$ext" }
 
-                val request = Request.Builder()
-                    .url(searchUrl)
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                    .build()
+                // Запускаем параллельную проверку каждого домена через пулы корутин
+                candidateUrls.map { domain ->
+                    launch {
+                        try {
+                            // Проверяем существование домена на уровне DNS-резолвинга
+                            val address = java.net.InetAddress.getByName(domain)
 
-                try {
-                    client.newCall(request).execute().use { response ->
-                        val jsonResponse = response.body?.string() ?: ""
+                            // Если DNS-запись успешна, проверяем, отвечает ли сервер по HTTP порту
+                            val socket = java.net.Socket()
+                            socket.connect(java.net.InetSocketAddress(address, 80), 1200) // таймаут 1.2 секунды
+                            socket.close()
 
-                      
-                        val regex = """"[^"\\]*(?:\\.[^"\\]*)*"""".toRegex()
-                        val matches = regex.findAll(jsonResponse)
-                            .map { it.value.replace("\"", "") } // Убираем кавычки
-                            .filter { it != query && it.isNotEmpty() && !it.startsWith("[") && !it.startsWith("]") }
-                            .distinct()
-                            .toList()
-
-                        if (matches.isEmpty()) {
-                            searchResultsList.add("Ничего не найдено")
-                        } else {
-                           
-                            matches.forEach { match ->
-                                val formattedUrl = if (match.contains(".")) match else "$match.com"
-                                searchResultsList.add(formattedUrl)
+                            synchronized(activeDomains) {
+                                activeDomains.add(domain)
                             }
+                        } catch (e: Exception) {
+                            // Если домен не зарегистрирован или сервер отключен, просто игнорируем его
                         }
                     }
-                } catch (e: IOException) {
-                    searchResultsList.add("Ошибка сети при поиске")
-                } finally {
+                }.joinAll() // Ждем окончания проверки всех вариантов
+
+                // Безопасно обновляем UI-список в главном потоке Swing (без использования Dispatchers.Main)
+                javax.swing.SwingUtilities.invokeLater {
+                    if (activeDomains.isEmpty()) {
+                        searchResultsList.add("Ничего не найдено")
+                    } else {
+                        // Сортируем для удобства (.com и .ru будут выше)
+                        val sorted = activeDomains.sortedBy { ext ->
+                            when {
+                                ext.endsWith(".com") -> 0
+                                ext.endsWith(".ru") -> 1
+                                else -> 2
+                            }
+                        }
+                        searchResultsList.addAll(sorted)
+                    }
                     isSearchLoading = false
                 }
             }
         }
     }
+
+
+
+
 
 
 
@@ -503,15 +516,31 @@ fun MainAppScreen(
                     )
                     Spacer(modifier = Modifier.weight(1f))
 
-                    AnimatedButton(
-                        text = "ПРИСТУПИТЬ",
-                        textColor = Color.White,
-                        bgColor = Color(0xFF2979FF),
-                        scale = welcomeScale,
-                        onPressDown = { welcomeScale = 0.95f },
-                        onPressUp = { welcomeScale = 1.0f },
-                        onClick = { switchView("main") }
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AnimatedButton(
+                            text = "ПОИСК ПО URL",
+                            textColor = Color.White,
+                            bgColor = Color(0xFF2979FF),
+                            scale = welcomeScale,
+                            onPressDown = { welcomeScale = 0.95f },
+                            onPressUp = { welcomeScale = 1.0f },
+                            onClick = { onTabChange("scan") }
+                        )
+
+                        AnimatedButton(
+                            text = "ПОИСК ПО СОВПАДЕНИЯМ",
+                            textColor = Color.White,
+                            bgColor = Color(0xFF2979FF),
+                            scale = welcomeScale,
+                            onPressDown = { welcomeScale = 0.95f },
+                            onPressUp = { welcomeScale = 1.0f },
+                            onClick = { onTabChange("search") }
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(32.dp))
                 }
             }
@@ -756,7 +785,7 @@ fun MainAppScreen(
                 }
             }
         } else if (selectedTab == "search") {
-            
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -901,6 +930,7 @@ fun MainAppScreen(
 
 
 
+
             if (isBottomSheetOpen) {
                 AlertDialog(
                     onDismissRequest = { isBottomSheetOpen = false },
@@ -908,7 +938,6 @@ fun MainAppScreen(
                     text = {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Text("Разработчик: Георгий Смердов", fontSize = 14.sp, color = dropdownTextColor.copy(alpha = 0.7f))
-                            Text("Движок: PhysicsEngine 1.0", fontSize = 13.sp, color = dropdownTextColor.copy(alpha = 0.4f), fontStyle = FontStyle.Italic)
                             Text("Версия: $VERSION", fontSize = 12.sp, color = dropdownTextColor.copy(alpha = 0.3f))
                         }
                     },
