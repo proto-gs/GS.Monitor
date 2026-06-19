@@ -9,13 +9,15 @@
     <tr>
       <td><b>Windows</b></td>
       <td>
-        <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.1/gs-monitor-1.0.1.exe"><img src="https://shields.io" alt="Windows Setup"></a>
+        <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.1/gs-monitor-1.0.1.exe"><img src="https://img.shields.io/badge/Setup-x64-4682b4
+" alt="Windows Setup"></a>
       </td>
     </tr>
     <tr>
       <td><b>Linux</b></td>
       <td>
-        <a href="https://img.shields.io/debian/v/GS.Monitor?style=for-the-badge" alt="Linux Deb"></a>
+        <a href="https://img.shields.io/badge/DebPackage-ARM--x64-d35400?logo=debian
+" alt="Linux Deb"></a>
       </td>
     </tr>
   </tbody>
