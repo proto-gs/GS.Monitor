@@ -15,8 +15,7 @@
     <tr>
       <td><b>Linux</b></td>
       <td>
-        <a href="https://img.shields.io/debian/v/GS.Monitor?style=for-the-badge"
- alt="Linux Deb"></a>
+        <a href="https://img.shields.io/debian/v/GS.Monitor?style=for-the-badge" alt="Linux Deb"></a>
       </td>
     </tr>
   </tbody>
