@@ -9,7 +9,7 @@
     <tr>
       <td><b>Windows</b></td>
       <td>
-        <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.1/gs-monitor-1.0.1.exe"><img src="https://img.shields.io/badge/Setup-x64-4682b4" alt="Windows Setup"></a>
+        <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.1/gs.monitor-1.0.1.exe"><img src="https://img.shields.io/badge/Setup-x64-4682b4" alt="Windows Setup"></a>
       </td>
     </tr>
     <tr>
