@@ -15,7 +15,7 @@
     <tr>
       <td><b>Linux</b></td>
       <td>
-        <a href="https://img.shields.io/badge/DebPackage-ARM--x64-d35400?logo=debian" alt="Linux Deb"></a>
+        <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.1/gs.monitor_1.0.1_amd64.deb"><img src="https://img.shields.io/badge/DebPackage-ARM--x64-d35400?logo=debian" alt="Linux Deb ARM"></a>
       </td>
     </tr>
   </tbody>
