@@ -104,13 +104,6 @@ private val globalHttpClient = OkHttpClient.Builder()
 
 fun main() {
 
-    System.setProperty("skiko.linux.wmClass", "gs.monitor")
-    System.setProperty("compose.application.configureSwingGlobals", "gs.monitor")
-    System.setProperty("compose.application.configure.id", "gs.monitor")
-
-
-    System.setProperty("apple.awt.application.name", "GS.Monitor")
-
     application {
         val windowState = rememberWindowState(size = DpSize(850.dp, 650.dp))
 
