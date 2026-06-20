@@ -25,10 +25,10 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.ui)
 
-                // Сетевая библиотека для сканера URL
+
                 implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
-                // Поддержка Dispatchers.Main для стабильной работы корутин на Windows/Linux
+
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
             }
         }
@@ -39,7 +39,7 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
-            // Динамический выбор формата сборки под текущую ОС
+
             val currentOs = System.getProperty("os.name").lowercase()
             if (currentOs.contains("win")) {
                 targetFormats(
@@ -50,19 +50,17 @@ compose.desktop {
                 targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb)
             }
 
-            packageName = "gs-monitor"
+            packageName = "gs.monitor"
             packageVersion = "1.0.1"
             vendor = "G. Smerdov"
 
-            // ИСПРАВЛЕНО: Вместо жесткого списка модулей включаем автоматический сборщик.
-            // Это позволит jlink корректно упаковать OkHttp и корутины.
             includeAllModules = true
 
             windows {
                 menu = true
                 shortcut = true
                 dirChooser = true
-                // Исправлено: Для Windows возвращен корректный .ico
+
                 iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
             }
 
