@@ -25,7 +25,7 @@
 
 
 <details>
-  <summary>📸 Посмотреть скриншоты (нажмите, чтобы развернуть)</summary>
+  <summary> Посмотреть скриншоты приложения </summary>
   
   <p align="center" style="white-space: nowrap; overflow-x: auto;">
     <img src="https://github.com/user-attachments/assets/070dbef2-cbf0-4d0c-b49f-5eaffe8a18c9" alt="Скриншот 1" width="600" style="display: inline-block; margin-right: 10px;">
