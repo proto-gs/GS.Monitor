@@ -23,6 +23,18 @@
 
 <br>
 
+<details>
+  <summary>📸 Посмотреть скриншоты (нажмите, чтобы развернуть)</summary>
+  
+  <p align="center">
+    <img src="https://github.com" alt="Скриншот 1" width="30%">
+    <img src="https://github.com" alt="Скриншот 2" width="30%">
+    <img src="https://github.com" alt="Скриншот 3" width="30%">
+    <br><br>
+    <img src="https://github.com" alt="Скриншот 4" width="30%">
+    <img src="https://github.com" alt="Скриншот 5" width="30%">
+  </p>
+</details>
 
 
 
