@@ -36,6 +36,19 @@
   </p>
 </details>
 
+<details>
+  <summary>📸 Посмотреть скриншоты (нажмите, чтобы развернуть)</summary>
+  
+  <p align="center" style="white-space: nowrap; overflow-x: auto;">
+    <img src="https://github.com/user-attachments/assets/070dbef2-cbf0-4d0c-b49f-5eaffe8a18c9" alt="Скриншот 1" width="600" style="display: inline-block; margin-right: 10px;">
+    <img src="https://github.com/user-attachments/assets/5215acef-86b5-4c52-b8ba-49fd7601a6ab" alt="Скриншот 2" width="600" style="display: inline-block; margin-right: 10px;">
+    <img src="https://github.com/user-attachments/assets/31483ede-fb3a-4edd-8f75-7dab358a94af" alt="Скриншот 3" width="600" style="display: inline-block; margin-right: 10px;">
+    <img src="https://github.com/user-attachments/assets/b9603544-3164-4af2-9ace-84f8c26a050c" alt="Скриншот 4" width="600" style="display: inline-block; margin-right: 10px;">
+    <img src="https://github.com/user-attachments/assets/b9a9ebc8-5059-435d-bb0b-9d28894e4554" alt="Скриншот 5" width="600" style="display: inline-block;">
+  </p>
+</details>
+
+
 
 
 
