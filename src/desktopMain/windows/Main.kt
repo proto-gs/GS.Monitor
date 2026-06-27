@@ -161,7 +161,7 @@ fun main() {
             onCloseRequest = ::exitApplication,
             state = windowState,
             title = "GS.Monitor",
-            icon = painterResource("icon.png"),
+            icon = painterResource("icon.ico"),
             undecorated = false,
             transparent = false
         ) {
