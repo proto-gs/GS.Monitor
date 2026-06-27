@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.gshttp.monitor"
-version = "1.0.1"
+version = "1.0.2"
 
 kotlin {
     jvmToolchain {
@@ -49,7 +49,7 @@ compose.desktop {
             }
 
             packageName = "gs.monitor"
-            packageVersion = "1.0.1"
+            packageVersion = "1.0.2"
             vendor = "G. Smerdov"
 
             
