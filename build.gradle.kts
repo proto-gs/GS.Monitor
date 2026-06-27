@@ -17,7 +17,7 @@ kotlin {
     }
 
     sourceSets {
-        // ИСПРАВЛЕНО: Вернул обратно твою рабочую строку без jvmContext
+        
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -52,7 +52,7 @@ compose.desktop {
             packageVersion = "1.0.1"
             vendor = "G. Smerdov"
 
-            // Та самая функция, про которую ты говорил:
+            
             includeAllModules = true
 
             windows {
