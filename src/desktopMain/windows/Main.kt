@@ -107,13 +107,13 @@ import androidx.compose.material.icons.filled.FindInPage
 
 
 
-const val VERSION = "1.0.1"
+const val VERSION = "1.0.2"
 val currentUserId = System.getProperty("user.name") ?: "unknown_user"
 
-// Стабильный блок функций работы с историей в домашней директории пользователя
+
 private fun getHistoryFile(): java.io.File {
     val userHome = System.getProperty("user.home") ?: ""
-    // Создаем или используем скрытую/выделенную папку .gs_monitor в профиле пользователя
+
     val appDir = java.io.File(userHome, ".gs_monitor")
     if (!appDir.exists()) {
         appDir.mkdirs()
@@ -161,7 +161,7 @@ fun main() {
             onCloseRequest = ::exitApplication,
             state = windowState,
             title = "GS.Monitor",
-            icon = painterResource("icon.ico"),
+            icon = painterResource("icon.png"),
             undecorated = false,
             transparent = false
         ) {
@@ -308,7 +308,7 @@ fun main() {
                                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                 ) {
                                     Icon(
-                                        // ИСПРАВЛЕНИЕ: Заменили Icons.Filled.Search на Icons.Filled.FindInPage
+
                                         imageVector = Icons.Filled.FindInPage,
                                         contentDescription = "Поиск совпадений",
                                         tint = if (selectedTab == "search") Color(0xFF2979FF) else Color.Gray
@@ -382,7 +382,7 @@ fun MainAppScreen(
 
     val scanHistoryList = remember { mutableStateListOf<String>() }
 
-    // ДОБАВИТЬ ЭТОТ БЛОК: Автоматическая загрузка истории силами Kotlin при старте
+
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             val historyFromFile = loadKotlinHistory()
@@ -471,7 +471,7 @@ fun MainAppScreen(
                         searchResultsList.addAll(sorted)
                     }
 
-                    // СОХРАНЕНИЕ В ИСТОРИЮ: Записываем результаты поиска в файл через Kotlin
+
                     val searchLogItem = "[ПОИСК] Ключевое слово: '$query' -> Найдено доменов: ${activeDomains.size}"
                     scanHistoryList.add(0, searchLogItem)
                     saveToKotlinHistory(searchLogItem)
@@ -524,7 +524,7 @@ fun MainAppScreen(
                         withContext(Dispatchers.Main) {
                             scanHistoryList.add(0, logItem)
                         }
-                        saveToKotlinHistory(logItem) // Сохранение в файл истории Kotlin
+                        saveToKotlinHistory(logItem)
 
                         val headers = response.headers
                         for (i in 0 until headers.size) {
@@ -541,7 +541,7 @@ fun MainAppScreen(
                     withContext(Dispatchers.Main) {
                         scanHistoryList.add(0, errorLogItem)
                     }
-                    saveToKotlinHistory(errorLogItem) // Сохранение ошибки в файл истории Kotlin
+                    saveToKotlinHistory(errorLogItem)
                 } finally {
                     isLoading = false
                 }
@@ -591,15 +591,15 @@ fun MainAppScreen(
                     }
                 }
 
-                // Центральный блок бренда, закрепленный в верхней части экрана
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .width(360.dp)
                         .align(Alignment.TopCenter)
-                        .padding(top = 110.dp) // Точный отступ сверху, чтобы бренд был в верхней трети экрана
+                        .padding(top = 110.dp)
                 ) {
-                    // Увеличенный логотип
+
                     Box(
                         modifier = Modifier.size(120.dp).clip(CircleShape)
                             .background(if (isDark) Color.White else Color(0xFF1C1B1F)),
@@ -615,7 +615,7 @@ fun MainAppScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Текст названия
+
                     Text(
                         "GS HTTP",
                         fontSize = 42.sp,
@@ -631,13 +631,13 @@ fun MainAppScreen(
                     )
                 }
 
-                // Кнопки управления, зафиксированные снизу экрана
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 48.dp) // Комфортный отступ от нижней границы окна
+                        .padding(bottom = 48.dp)
                 ) {
                     AnimatedButton(
                         text = "ПОИСК ПО URL",
@@ -678,7 +678,7 @@ fun MainAppScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // КНОПКА ИСТОРИИ (ЧАСИКИ С ПАЛЬЧИКОМ)
+
                     IconButton(
                         onClick = { isHistoryOpen = true },
                         modifier = Modifier.pointerHoverIcon(
@@ -693,7 +693,7 @@ fun MainAppScreen(
                             modifier = Modifier.size(24.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            // Ободок часов (круг)
+
                             Icon(
                                 imageVector = Icons.Filled.History,
                                 contentDescription = "История",
@@ -703,7 +703,7 @@ fun MainAppScreen(
                         }
                     }
 
-                    // КНОПКА НАСТРОЕК (ШЕСТЕРЁНКА С ПАЛЬЧИКОМ)
+
                     IconButton(
                         onClick = { isScanSettingsOpen = true },
                         modifier = Modifier.pointerHoverIcon(
@@ -957,10 +957,10 @@ fun MainAppScreen(
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start, // Выравниваем всё по левому краю
+                        horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // ИСПРАВЛЕНИЕ: Переносим часики истории в самый левый угол
+
                         IconButton(
                             onClick = { isHistoryOpen = true },
                             modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
@@ -973,9 +973,9 @@ fun MainAppScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(8.dp)) // Небольшой отступ между часиками и текстом
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                        // ИСПРАВЛЕНИЕ: Текстовый заголовок теперь идет вторым
+
                         Text(
                             text = "ПОИСК ПО СОВПАДЕНИЯМ",
                             fontSize = 11.sp,
@@ -1181,8 +1181,8 @@ fun MainAppScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text("Разработчик: Георгий Смердов", fontSize = 14.sp, color = dropdownTextColor)
-                    Text("Версия продукта: $VERSION", fontSize = 14.sp, color = dropdownTextColor)
-                    // ДОБАВЛЕНО: Источник скачивания приложения
+                    Text("Версия: $VERSION", fontSize = 14.sp, color = dropdownTextColor)
+
                     Text("Скачано: GitHub", fontSize = 14.sp, color = dropdownTextColor)
 
                     Box(
@@ -1201,19 +1201,19 @@ fun MainAppScreen(
                     )
 
                     TextButton(
-                        onClick = { uriHandler.openUri("https://github.com") },
+                        onClick = { uriHandler.openUri("https://github.com/g60373250-wq/GS.Monitor") },
                         modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                     ) {
                         Row(
                             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp) // Отступ между иконкой и текстом
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
                                 painter = painterResource("github.png"),
                                 contentDescription = "GitHub",
-                                tint = dropdownTextColor, // Цвет иконки подстроится под темную/светлую тему
-                                modifier = Modifier.size(18.dp) // Небольшой аккуратный размер под текст
+                                tint = dropdownTextColor,
+                                modifier = Modifier.size(18.dp)
                             )
                             Text("Репозиторий проекта на GitHub ↗", fontSize = 13.sp, color = Color(0xFF2979FF))
                         }
@@ -1383,7 +1383,7 @@ fun MainAppScreen(
                             urlInput = ""; resText = ""; safeText = ""
                             scanHistoryList.clear()
                             responseHeadersList.clear()
-                            clearKotlinHistoryFile() // Прямая очистка файла истории Kotlin
+                            clearKotlinHistoryFile()
                             isWelcomeSettingsOpen = false
                             isScanSettingsOpen = false
                         },
@@ -1470,7 +1470,7 @@ fun MainAppScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     TextButton(onClick = {
                         scanHistoryList.clear()
-                        clearKotlinHistoryFile() // Прямая очистка файла истории Kotlin
+                        clearKotlinHistoryFile()
                     }) {
                         Text(
                             "ОЧИСТИТЬ",
@@ -1478,7 +1478,7 @@ fun MainAppScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    // Кнопка Готово остается без изменений
+
 
                     TextButton(onClick = { isHistoryOpen = false }) {
                         Text(
@@ -1561,7 +1561,7 @@ fun AnimatedButton(
             .width(320.dp)
             .height(56.dp)
             .graphicsLayer(scaleX = scale, scaleY = scale)
-            // ДОБАВЛЕНО: Меняем курсор на пальчик при наведении
+
             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
             .clip(RoundedCornerShape(size = 24.dp))
             .background(bgColor)
@@ -1578,7 +1578,6 @@ fun AnimatedButton(
         Text(text = text, fontWeight = FontWeight.Bold, color = textColor, fontSize = 16.sp)
     }
 }
-
 
 
 
