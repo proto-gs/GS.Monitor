@@ -94,8 +94,58 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.concurrent.TimeUnit
+import java.io.File
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material3.Icon
+import kotlin.io.path.Path
+import kotlin.io.path.appendText
+import kotlin.io.path.exists
+import kotlin.io.path.readLines
+import kotlin.io.path.writeText
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.FindInPage
 
-const val VERSION = "1.0.1"
+
+
+const val VERSION = "1.0.2"
+val currentUserId = System.getProperty("user.name") ?: "unknown_user"
+
+
+private fun getHistoryFile(): java.io.File {
+    val userHome = System.getProperty("user.home") ?: ""
+
+    val appDir = java.io.File(userHome, ".gs_monitor")
+    if (!appDir.exists()) {
+        appDir.mkdirs()
+    }
+    return java.io.File(appDir, "scan_history.txt")
+}
+
+fun saveToKotlinHistory(text: String) {
+    runCatching {
+        val file = getHistoryFile()
+        file.appendText("$text\n", Charsets.UTF_8)
+    }.onFailure { it.printStackTrace() }
+}
+
+fun loadKotlinHistory(): List<String> {
+    return runCatching {
+        val file = getHistoryFile()
+        if (file.exists()) file.readLines(Charsets.UTF_8) else emptyList()
+    }.getOrDefault(emptyList())
+}
+
+fun clearKotlinHistoryFile() {
+    runCatching {
+        val file = getHistoryFile()
+        if (file.exists()) {
+            file.writeText("", Charsets.UTF_8)
+        }
+    }.onFailure { it.printStackTrace() }
+}
+
+
+
 
 
 private val globalHttpClient = OkHttpClient.Builder()
@@ -103,7 +153,6 @@ private val globalHttpClient = OkHttpClient.Builder()
     .build()
 
 fun main() {
-
 
     application {
         val windowState = rememberWindowState(size = DpSize(850.dp, 650.dp))
@@ -125,16 +174,12 @@ fun main() {
 
                 }
             }
-
-
             var appThemeSetting by remember { mutableStateOf("system") }
             val isDarkTheme = when (appThemeSetting) {
                 "dark" -> true
                 "light" -> false
                 else -> isSystemInDarkTheme()
             }
-
-
             MaterialTheme(colorScheme = if (isDarkTheme) darkColorScheme() else lightColorScheme()) {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
 
@@ -176,7 +221,6 @@ fun main() {
                                         color = if (isDarkTheme) Color.Black else Color.White
                                     )
                                 }
-
                                 if (isSidebarExpanded) {
                                     IconButton(
                                         onClick = { isSidebarExpanded = false },
@@ -187,8 +231,6 @@ fun main() {
                                     }
                                 }
                             }
-
-
                             if (!isSidebarExpanded) {
                                 IconButton(
                                     onClick = { isSidebarExpanded = true },
@@ -228,8 +270,6 @@ fun main() {
                                     )
                                 }
                             }
-
-
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -256,8 +296,6 @@ fun main() {
                                     )
                                 }
                             }
-
-
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -270,7 +308,8 @@ fun main() {
                                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Filled.Search,
+
+                                        imageVector = Icons.Filled.FindInPage,
                                         contentDescription = "Поиск совпадений",
                                         tint = if (selectedTab == "search") Color(0xFF2979FF) else Color.Gray
                                     )
@@ -284,9 +323,8 @@ fun main() {
                                     )
                                 }
                             }
+
                         }
-
-
                         Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                             MainAppScreen(
                                 appThemeSetting = appThemeSetting,
@@ -343,6 +381,17 @@ fun MainAppScreen(
     var isLoading by remember { mutableStateOf(false) }
 
     val scanHistoryList = remember { mutableStateListOf<String>() }
+
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            val historyFromFile = loadKotlinHistory()
+            withContext(Dispatchers.Main) {
+                scanHistoryList.addAll(historyFromFile)
+            }
+        }
+    }
+
     val httpMethods = listOf("GET", "POST", "HEAD", "PUT")
     var selectedMethodIndex by remember { mutableStateOf(0) }
     val responseHeadersList = remember { mutableStateListOf<Pair<String, String>>() }
@@ -379,16 +428,6 @@ fun MainAppScreen(
     val searchResultsList = remember { mutableStateListOf<String>() }
     var isSearchLoading by remember { mutableStateOf(false) }
 
-
-    val client = remember {
-        okhttp3.OkHttpClient.Builder()
-            .connectTimeout(1500, java.util.concurrent.TimeUnit.MILLISECONDS)
-            .readTimeout(1500, java.util.concurrent.TimeUnit.MILLISECONDS)
-            .followRedirects(true) // Переходим по редиректам автоматически
-            .build()
-    }
-
-
     val runSearch: () -> Unit = {
         val query = searchQueryInput.trim().lowercase().replace(" ", "")
         if (query.isNotEmpty()) {
@@ -396,67 +435,52 @@ fun MainAppScreen(
             searchResultsList.clear()
 
             scope.launch(Dispatchers.IO) {
-                val topExtensions = listOf("com", "ru", "org", "net", "io", "me", "co", "cc", "app", "dev")
+                val topExtensions =
+                    listOf("com", "org", "net", "ru", "io", "me", "co", "cc", "app", "dev")
+                val activeDomains = mutableListOf<String>()
+                val candidateUrls = topExtensions.map { ext -> "$query.$ext" }
 
-                val activeDomains = java.util.Collections.synchronizedList(mutableListOf<String>())
-
-
-                val candidateUrls = topExtensions.map { ext -> "https://$query.$ext" }
-
-                candidateUrls.map { urlString ->
+                candidateUrls.map { domain ->
                     launch {
                         try {
+                            val address = InetAddress.getByName(domain)
+                            val socket = Socket()
+                            socket.connect(InetSocketAddress(address, 80), 1200)
+                            socket.close()
 
-                            val request = okhttp3.Request.Builder()
-                                .url(urlString)
-                                .head()
-                                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                                .build()
-
-                            client.newCall(request).execute().use { response ->
-                                if (response.isSuccessful || response.code in 300..399) {
-                                    val cleanDomain = urlString.removePrefix("https://")
-                                    activeDomains.add(cleanDomain)
-                                }
+                            synchronized(activeDomains) {
+                                activeDomains.add(domain)
                             }
                         } catch (e: Exception) {
 
-                            try {
-                                val backupUrl = urlString.replace("https://", "http://")
-                                val backupRequest = okhttp3.Request.Builder().url(backupUrl).head().build()
-                                client.newCall(backupRequest).execute().use { response ->
-                                    if (response.isSuccessful || response.code in 300..399) {
-                                        activeDomains.add(backupUrl.removePrefix("http://"))
-                                    }
-                                }
-                            } catch (fallbackEx: Exception) {
-
-                            }
                         }
                     }
                 }.joinAll()
-
 
                 withContext(Dispatchers.Main) {
                     if (activeDomains.isEmpty()) {
                         searchResultsList.add("Ничего не найдено")
                     } else {
-
-                        val sorted = activeDomains.sortedWith(compareBy { domain ->
+                        val sorted = activeDomains.sortedBy { ext ->
                             when {
-                                domain.endsWith(".com") -> 0
-                                domain.endsWith(".ru") -> 1
+                                ext.endsWith(".com") -> 0
+                                ext.endsWith(".ru") -> 1
                                 else -> 2
                             }
-                        })
+                        }
                         searchResultsList.addAll(sorted)
                     }
+
+
+                    val searchLogItem = "[ПОИСК] Ключевое слово: '$query' -> Найдено доменов: ${activeDomains.size}"
+                    scanHistoryList.add(0, searchLogItem)
+                    saveToKotlinHistory(searchLogItem)
+
                     isSearchLoading = false
                 }
             }
         }
     }
-
 
     val runScan: () -> Unit = {
         val url = urlInput.trim()
@@ -486,7 +510,6 @@ fun MainAppScreen(
                 } else {
                     requestBuilder.method(method, null)
                 }
-
                 try {
                     client.newCall(requestBuilder.build()).execute().use { response ->
                         val code = response.code
@@ -497,7 +520,11 @@ fun MainAppScreen(
                         safeText = if (isHttps) "БЕЗОПАСНО (SSL)" else "НЕБЕЗОПАСНО (HTTP)"
                         safeTextColor = if (isHttps) Color(0xFF00E676) else Color(0xFFFF1744)
 
-                        scanHistoryList.add(0, "[$method] $cleanedUrl -> HTTP $code")
+                        val logItem = "[$method] $cleanedUrl -> HTTP $code"
+                        withContext(Dispatchers.Main) {
+                            scanHistoryList.add(0, logItem)
+                        }
+                        saveToKotlinHistory(logItem)
 
                         val headers = response.headers
                         for (i in 0 until headers.size) {
@@ -509,13 +536,19 @@ fun MainAppScreen(
                     resTextColor = Color(0xFFFF1744)
                     safeText = "СЕРВЕР НЕДОСТУПЕН"
                     safeTextColor = Color.Gray
-                    scanHistoryList.add(0, "[$method] $cleanedUrl -> ОШИБКА")
+
+                    val errorLogItem = "[$method] $cleanedUrl -> ОШИБКА"
+                    withContext(Dispatchers.Main) {
+                        scanHistoryList.add(0, errorLogItem)
+                    }
+                    saveToKotlinHistory(errorLogItem)
                 } finally {
                     isLoading = false
                 }
             }
         }
     }
+
     Box(modifier = Modifier.fillMaxSize().alpha(animatedFadeVal.coerceIn(0f, 1f))) {
         if (selectedTab == "home") {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -526,15 +559,15 @@ fun MainAppScreen(
                     IconButton(
                         onClick = { isMenuExpanded = true },
                         modifier = Modifier.size(48.dp)
+                            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Настройки",
+                            imageVector = Icons.Filled.MoreVert,
+                            contentDescription = "Меню",
                             tint = settingsIconColor,
                             modifier = Modifier.size(28.dp)
                         )
                     }
-
                     DropdownMenu(
                         expanded = isMenuExpanded,
                         onDismissRequest = { isMenuExpanded = false },
@@ -557,68 +590,83 @@ fun MainAppScreen(
                         )
                     }
                 }
+
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxHeight().width(320.dp).align(Alignment.Center)
+                    modifier = Modifier
+                        .width(360.dp)
+                        .align(Alignment.TopCenter)
+                        .padding(top = 110.dp)
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
+
                     Box(
-                        modifier = Modifier.size(100.dp).clip(CircleShape)
+                        modifier = Modifier.size(120.dp).clip(CircleShape)
                             .background(if (isDark) Color.White else Color(0xFF1C1B1F)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "GS",
-                            fontSize = 38.sp,
+                            fontSize = 44.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isDark) Color.Black else Color.White
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+
                     Text(
                         "GS HTTP",
-                        fontSize = 36.sp,
+                        fontSize = 42.sp,
                         fontWeight = FontWeight.Black,
                         color = textColorPrimary
                     )
                     Text(
                         "ENGINE BY G. SMERDOV",
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = textColorSecondary,
                         letterSpacing = 2.sp
                     )
-                    Spacer(modifier = Modifier.weight(1f))
+                }
 
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AnimatedButton(
-                            text = "ПОИСК ПО URL",
-                            textColor = Color.White,
-                            bgColor = Color(0xFF2979FF),
-                            scale = welcomeScale,
-                            onPressDown = { welcomeScale = 0.95f },
-                            onPressUp = { welcomeScale = 1.0f },
-                            onClick = { onTabChange("scan") }
-                        )
 
-                        AnimatedButton(
-                            text = "ПОИСК ПО СОВПАДЕНИЯМ",
-                            textColor = Color.White,
-                            bgColor = Color(0xFF2979FF),
-                            scale = welcomeScale,
-                            onPressDown = { welcomeScale = 0.95f },
-                            onPressUp = { welcomeScale = 1.0f },
-                            onClick = { onTabChange("search") }
-                        )
-                    }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 48.dp)
+                ) {
+                    AnimatedButton(
+                        text = "ПОИСК ПО URL",
+                        textColor = Color.White,
+                        bgColor = Color(0xFF2979FF),
+                        scale = welcomeScale,
+                        onPressDown = { welcomeScale = 0.95f },
+                        onPressUp = { welcomeScale = 1.0f },
+                        onClick = { onTabChange("scan") }
+                    )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    AnimatedButton(
+                        text = "ПОИСК ПО СОВПАДЕНИЯМ",
+                        textColor = Color.White,
+                        bgColor = Color(0xFF2979FF),
+                        scale = welcomeScale,
+                        onPressDown = { welcomeScale = 0.95f },
+                        onPressUp = { welcomeScale = 1.0f },
+                        onClick = { onTabChange("search") }
+                    )
                 }
             }
+
+
+
+
+
+
+
         } else if (selectedTab == "scan") {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -630,17 +678,42 @@ fun MainAppScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { isHistoryOpen = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "История",
-                            tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(
-                                alpha = 0.7f
-                            ),
-                            modifier = Modifier.size(24.dp)
+
+                    IconButton(
+                        onClick = { isHistoryOpen = true },
+                        modifier = Modifier.pointerHoverIcon(
+                            androidx.compose.ui.input.pointer.PointerIcon(
+                                java.awt.Cursor(
+                                    java.awt.Cursor.HAND_CURSOR
+                                )
+                            )
                         )
+                    ) {
+                        Box(
+                            modifier = Modifier.size(24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+
+                            Icon(
+                                imageVector = Icons.Filled.History,
+                                contentDescription = "История",
+                                tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
                     }
-                    IconButton(onClick = { isScanSettingsOpen = true }) {
+
+
+                    IconButton(
+                        onClick = { isScanSettingsOpen = true },
+                        modifier = Modifier.pointerHoverIcon(
+                            androidx.compose.ui.input.pointer.PointerIcon(
+                                java.awt.Cursor(
+                                    java.awt.Cursor.HAND_CURSOR
+                                )
+                            )
+                        )
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = "Настройки",
@@ -651,6 +724,7 @@ fun MainAppScreen(
                         )
                     }
                 }
+
 
                 Column(
                     modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
@@ -714,7 +788,6 @@ fun MainAppScreen(
                         ),
                         textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
                     )
-
                     Spacer(modifier = Modifier.height(24.dp))
 
                     if (resText.isNotEmpty()) {
@@ -745,7 +818,6 @@ fun MainAppScreen(
                                             color = if (resText == "АНАЛИЗ...") textColorPrimary else resTextColor
                                         )
                                     }
-
                                     if (safeText.isNotEmpty()) {
                                         Box(
                                             modifier = Modifier
@@ -823,7 +895,6 @@ fun MainAppScreen(
                                                 )
                                             }
                                         }
-
                                         VerticalScrollbar(
                                             adapter = rememberScrollbarAdapter(scrollState),
                                             modifier = Modifier.align(Alignment.CenterEnd)
@@ -835,8 +906,6 @@ fun MainAppScreen(
                         }
                     }
                 }
-
-
                 Column(
                     modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
                         .padding(bottom = 24.dp, start = 24.dp, end = 24.dp),
@@ -862,8 +931,19 @@ fun MainAppScreen(
                     }
                 }
             }
-
         } else if (selectedTab == "search") {
+            var selectedZoneIndex by remember { mutableStateOf(0) }
+            val zones = listOf("ВСЕ", "COM", "ORG", "NET", "RU", "IO", "ME", "CO", "CC", "APP", "DEV")
+
+            val filteredResults = remember(searchResultsList, selectedZoneIndex) {
+                if (selectedZoneIndex == 0) {
+                    searchResultsList
+                } else {
+                    val targetZone = "." + zones[selectedZoneIndex].lowercase()
+                    searchResultsList.filter { site -> site.endsWith(targetZone) }
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -875,16 +955,40 @@ fun MainAppScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(
-                        text = "ПОИСК ПО СОВПАДЕНИЯМ",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Gray,
-                        letterSpacing = 1.sp
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        IconButton(
+                            onClick = { isHistoryOpen = true },
+                            modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.History,
+                                contentDescription = "История",
+                                tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+
+                        Text(
+                            text = "ПОИСК ПО СОВПАДЕНИЯМ",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Gray,
+                            letterSpacing = 1.sp
+                        )
+                    }
+
 
                     TextField(
                         value = searchQueryInput,
+
                         onValueChange = { searchQueryInput = it },
                         placeholder = {
                             Text(
@@ -903,7 +1007,48 @@ fun MainAppScreen(
                         textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
                     )
 
-                    if (searchResultsList.isNotEmpty()) {
+                    if (searchResultsList.isNotEmpty() && !searchResultsList.contains("Ничего не найдено")) {
+                        TabRow(
+                            selectedTabIndex = selectedZoneIndex,
+                            containerColor = Color.Transparent,
+                            contentColor = Color(0xFF2979FF),
+                            divider = {},
+                            indicator = { tabPositions ->
+                                if (selectedZoneIndex < tabPositions.size) {
+                                    Box(
+                                        modifier = Modifier
+                                            .tabIndicatorOffset(tabPositions[selectedZoneIndex])
+                                            .height(2.dp)
+                                            .background(Color(0xFF2979FF))
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            zones.forEachIndexed { index, zone ->
+                                val isSelected = selectedZoneIndex == index
+                                val tabTextColor = when {
+                                    isSelected && isDark -> Color.White
+                                    isSelected && !isDark -> Color(0xFF1C1B1F)
+                                    else -> Color.Gray.copy(alpha = 0.6f)
+                                }
+                                Tab(
+                                    selected = isSelected,
+                                    onClick = { selectedZoneIndex = index },
+                                    modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
+                                    text = {
+                                        Text(
+                                            text = zone,
+                                            fontSize = 12.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                            color = tabTextColor
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    if (filteredResults.isNotEmpty()) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
@@ -911,7 +1056,7 @@ fun MainAppScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    text = "НАЙДЕННЫЕ САЙТЫ (${searchResultsList.size})",
+                                    text = "НАЙДЕННЫЕ САЙТЫ (${filteredResults.size})",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Gray,
@@ -923,7 +1068,7 @@ fun MainAppScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .heightIn(max = 280.dp)
+                                        .heightIn(max = 240.dp)
                                         .background(
                                             if (isDark) Color(0xFF141517) else Color(0xFFE8E9ED),
                                             RoundedCornerShape(12.dp)
@@ -937,7 +1082,7 @@ fun MainAppScreen(
                                             .padding(end = 16.dp),
                                         verticalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        searchResultsList.forEach { site ->
+                                        filteredResults.forEach { site ->
                                             Text(
                                                 text = site,
                                                 fontSize = 14.sp,
@@ -947,8 +1092,10 @@ fun MainAppScreen(
                                                     .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                                     .pointerInput(Unit) {
                                                         detectTapGestures(onTap = {
-                                                            urlInput = site
-                                                            onTabChange("scan")
+                                                            if (site != "Ничего не найдено") {
+                                                                urlInput = site
+                                                                onTabChange("scan")
+                                                            }
                                                         })
                                                     }
                                             )
@@ -957,25 +1104,28 @@ fun MainAppScreen(
                                                     .fillMaxWidth()
                                                     .height(1.dp)
                                                     .background(
-                                                        if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(
-                                                            alpha = 0.05f
-                                                        )
+                                                        if (isDark) Color.White.copy(alpha = 0.05f)
+                                                        else Color.Black.copy(alpha = 0.05f)
                                                     )
                                             )
                                         }
                                     }
                                     VerticalScrollbar(
                                         adapter = rememberScrollbarAdapter(searchScrollState),
-                                        modifier = Modifier.align(Alignment.CenterEnd)
-                                            .fillMaxHeight()
+                                        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
                                     )
                                 }
                             }
                         }
+                    } else if (searchResultsList.isNotEmpty()) {
+                        Text(
+                            text = "В выбранной зоне совпадений нет",
+                            color = Color.Gray,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
                     }
                 }
-
-
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -991,7 +1141,10 @@ fun MainAppScreen(
                         onClick = { if (!isSearchLoading) runSearch() }
                     )
 
-                    TextButton(onClick = { switchView("welcome") }) {
+                    TextButton(
+                        onClick = { switchView("welcome") },
+                        modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                    ) {
                         Text(
                             text = "← ВЕРНУТЬСЯ",
                             color = Color(0xFF2979FF).copy(alpha = 0.8f),
@@ -1004,40 +1157,84 @@ fun MainAppScreen(
         }
     }
 
+
+
+
+
+
+
+
     if (isBottomSheetOpen) {
         AlertDialog(
             onDismissRequest = { isBottomSheetOpen = false },
             title = {
                 Text(
-                    text = "ИНФОРМАЦИЯ",
+                    text = "ИНФОРМАЦИЯ О ПРИЛОЖЕНИИ",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = dropdownTextColor
                 )
             },
             text = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Разработчик: Георгий Смердов",
-                        fontSize = 14.sp,
-                        color = dropdownTextColor.copy(alpha = 0.7f)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text("Разработчик: Георгий Смердов", fontSize = 14.sp, color = dropdownTextColor)
+                    Text("Версия: $VERSION", fontSize = 14.sp, color = dropdownTextColor)
+
+                    Text("Скачано: GitHub", fontSize = 14.sp, color = dropdownTextColor)
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(dropdownTextColor.copy(alpha = 0.1f))
                     )
+
                     Text(
-                        text = "Версия: $VERSION",
-                        fontSize = 12.sp,
-                        color = dropdownTextColor.copy(alpha = 0.3f)
+                        text = "ИСХОДНЫЙ КОД И РАЗРАБОТКА",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Gray,
+                        letterSpacing = 1.sp
                     )
+
+                    TextButton(
+                        onClick = { uriHandler.openUri("https://github.com/g60373250-wq/GS.Monitor") },
+                        modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource("github.png"),
+                                contentDescription = "GitHub",
+                                tint = dropdownTextColor,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text("Репозиторий проекта на GitHub ↗", fontSize = 13.sp, color = Color(0xFF2979FF))
+                        }
+                    }
                 }
+
             },
             confirmButton = {
-                TextButton(onClick = { isBottomSheetOpen = false }) {
-                    Text("ГОТОВО", color = Color(0xFF2979FF))
+                TextButton(
+                    onClick = { isBottomSheetOpen = false },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+                ) {
+                    Text("ГОТОВО", color = Color(0xFF2979FF), fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = dropdownBgColor,
             shape = RoundedCornerShape(24.dp)
         )
     }
+
+
 
     if (isWelcomeSettingsOpen || isScanSettingsOpen) {
         AlertDialog(
@@ -1183,16 +1380,18 @@ fun MainAppScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = {
-                            urlInput = ""; resText = ""; safeText =
-                            ""; scanHistoryList.clear(); responseHeadersList.clear(); isWelcomeSettingsOpen =
-                            false; isScanSettingsOpen = false
+                            urlInput = ""; resText = ""; safeText = ""
+                            scanHistoryList.clear()
+                            responseHeadersList.clear()
+                            clearKotlinHistoryFile()
+                            isWelcomeSettingsOpen = false
+                            isScanSettingsOpen = false
                         },
                         modifier = Modifier.fillMaxWidth().height(40.dp),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isDark) Color(
-                                0xFF222226
-                            ) else Color(0xFFFFEBEE), contentColor = Color(0xFFFF1744)
+                            containerColor = if (isDark) Color(0xFF222226) else Color(0xFFFFEBEE),
+                            contentColor = Color(0xFFFF1744)
                         )
                     ) {
                         Text(
@@ -1201,6 +1400,7 @@ fun MainAppScreen(
                             fontSize = 13.sp
                         )
                     }
+
                 }
             },
             confirmButton = {
@@ -1212,7 +1412,6 @@ fun MainAppScreen(
             shape = RoundedCornerShape(24.dp)
         )
     }
-
     if (isHistoryOpen) {
         AlertDialog(
             onDismissRequest = { isHistoryOpen = false },
@@ -1269,13 +1468,18 @@ fun MainAppScreen(
             },
             confirmButton = {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    TextButton(onClick = { scanHistoryList.clear() }) {
+                    TextButton(onClick = {
+                        scanHistoryList.clear()
+                        clearKotlinHistoryFile()
+                    }) {
                         Text(
                             "ОЧИСТИТЬ",
                             color = Color(0xFFFF4D4D),
                             fontWeight = FontWeight.Bold
                         )
                     }
+
+
                     TextButton(onClick = { isHistoryOpen = false }) {
                         Text(
                             "ГОТОВО",
@@ -1289,7 +1493,6 @@ fun MainAppScreen(
             shape = RoundedCornerShape(24.dp)
         )
     }
-
     if (isThemeDialogOpen) {
         AlertDialog(
             onDismissRequest = { isThemeDialogOpen = false },
@@ -1358,17 +1561,14 @@ fun AnimatedButton(
             .width(320.dp)
             .height(56.dp)
             .graphicsLayer(scaleX = scale, scaleY = scale)
+
+            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
             .clip(RoundedCornerShape(size = 24.dp))
             .background(bgColor)
             .pointerInput(Unit) {
                 detectTapGestures(onPress = {
                     onPressDown()
-                    try {
-                        tryAwaitRelease()
-                    } catch (e: Exception) {
-
-                    }
-
+                    runCatching { tryAwaitRelease() }
                     onPressUp()
                     onClick()
                 })
