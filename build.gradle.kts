@@ -17,6 +17,7 @@ kotlin {
     }
 
     sourceSets {
+        // ИСПРАВЛЕНО: Вернул обратно твою рабочую строку без jvmContext
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -24,11 +25,8 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.ui)
-
-
+                implementation(compose.materialIconsExtended)
                 implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
             }
         }
@@ -39,8 +37,8 @@ compose.desktop {
     application {
         mainClass = "MainKt"
         nativeDistributions {
-
             val currentOs = System.getProperty("os.name").lowercase()
+
             if (currentOs.contains("win")) {
                 targetFormats(
                     org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe,
@@ -54,13 +52,13 @@ compose.desktop {
             packageVersion = "1.0.1"
             vendor = "G. Smerdov"
 
+            // Та самая функция, про которую ты говорил:
             includeAllModules = true
 
             windows {
                 menu = true
                 shortcut = true
                 dirChooser = true
-
                 iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
             }
 
