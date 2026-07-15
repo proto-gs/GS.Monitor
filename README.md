@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-Desktop?style=for-the-badge&logo=kotlin&color=blue" alt="Platform">
+  <a href="https://github.com/proto-gs/GS.Monitor"><img src="https://img.shields.io/badge/Platform-Desktop?style=for-the-badge&logo=kotlin&color=blue" alt="Platform"></a>
   <a href="https://github.com/proto-gs/GS.Monitor/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT?style=for-the-badge&color=green" alt="License"></a>                                                          
   <img src="https://img.shields.io/badge/Release-v1.0.2-orange?style=for-the-badge" alt="Release">
 </p>
