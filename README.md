@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Desktop?style=for-the-badge&logo=kotlin&color=blue" alt="Platform">
-  <img src="https://img.shields.io/badge/License-MIT?style=for-the-badge&color=green" alt="License">
+  <img src="https://img.shields.io/badge/License-MIT?style=for-the-badge&color=green" alt="License"> <a href="https://github.com/proto-gs/GS.Monitor?tab=MIT-1-ov-file"></a>
   <img src="https://img.shields.io/badge/Release-v1.0.2-orange?style=for-the-badge" alt="Release">
 </p>
 
