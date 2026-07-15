@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Desktop?style=for-the-badge&logo=kotlin&color=blue" alt="Platform">
   <img src="https://img.shields.io/badge/License-MIT?style=for-the-badge&color=green" alt="License">
-  <img src="https://shields.io" alt="Release">
+  <img src="https://img.shields.io/badge/Release-v1.0.2-orange?style=for-the-badge" alt="Release">
 </p>
 
 <h1 align="center"> GS.Monitor</h1>
