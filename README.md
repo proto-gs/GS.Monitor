@@ -7,7 +7,7 @@
 <h1 align="center"> GS.Monitor</h1>
 
 <p align="center">
-  <b>Десктопное приложение для мониторинга системных метрик, созданное на базе Jetpack Compose Multiplatform (Desktop).</b>
+  <b>Десктопный анализ HTTP-трафика, созданное на базе Jetpack Compose Multiplatform (Desktop).</b>
 </p>
 
 ---
