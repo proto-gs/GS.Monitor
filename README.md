@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform?style=for-the-badge&logo=kotlin&color=blue" alt="Platform">
+  <img src="https://img.shields.io/badge/Platform-Desktop?style=for-the-badge&logo=kotlin&color=blue" alt="Platform">
   <img src="https://shields.io" alt="License">
   <img src="https://shields.io" alt="Release">
 </p>
