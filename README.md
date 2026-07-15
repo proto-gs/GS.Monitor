@@ -4,7 +4,7 @@
   <img src="https://shields.io" alt="Release">
 </p>
 
-<h1 align="center">🖥️ GS.Monitor</h1>
+<h1 align="center"> GS.Monitor</h1>
 
 <p align="center">
   <b>Десктопное приложение для мониторинга системных метрик, созданное на базе Jetpack Compose Multiplatform (Desktop).</b>
@@ -12,7 +12,7 @@
 
 ---
 
-## 🌐 Language / Язык
+##  Language / Язык
 * [English](#-english)
 * [Русский](#-русский)
 
@@ -20,53 +20,53 @@
 
 ## 🇺🇸 English
 
-### ⚙️ Requirements
+###  Requirements
 * **Java:** JDK 17 or higher
 
-### 🚀 Development Run
+###  Development Run
 To start the application in development mode, run the following command in your terminal:
 ```bash
 ./gradlew run
 ```
 
-### 📦 Building the Distribution
+###  Building the Distribution
 To build an installer (`.exe` or `.deb`) tailored for your current operating system, execute:
 ```bash
 ./gradlew packageDistributionForCurrentOS
 ```
 
-### 🤝 Forks & Collaboration
-This project is licensed under the **GNU GPL v3**. If you have forked this repository, created an unofficial build, or implemented custom features, we would love to collaborate! 
-* 📧 **Contact me:** `your_email@example.com`
+###  Forks & Collaboration
+This project is licensed under the **MIT License**. If you have forked this repository, created an unofficial build, or implemented custom features, we would love to collaborate! 
+*  **Contact me:** `georgsmerdov@outlook.com`
 * I will gladly review your modifications and potentially integrate them into the official main ecosystem.
 
 ---
 
 ## 🇷🇺 Русский
 
-### ⚙️ Требования
+###  Требования
 * **Java:** JDK 17 или выше
 
-### 🚀 Запуск проекта в режиме разработки
+###  Запуск проекта в режиме разработки
 Выполните команду в терминале:
 ```bash
 ./gradlew run
 ```
 
-### 📦 Сборка готового приложения (дистрибутива)
+###  Сборка готового приложения (дистрибутива)
 Для создания установочного пакета (`.exe` или `.deb`) под текущую ОС выполните:
 ```bash
 ./gradlew packageDistributionForCurrentOS
 ```
 
-### 🤝 Форки и сотрудничество
-Этот проект распространяется под лицензией **GNU GPL v3**. Если вы форкнули этот репозиторий, создали свое неофициальное приложение или внесли классные изменения — давайте сотрудничать!
-* 📧 **Связаться со мной:** `your_email@example.com`
+###  Форки и сотрудничество
+Этот проект распространяется под лицензией **MIT License**. Если вы форкнули этот репозиторий, создали свое неофициальное приложение или внесли классные изменения — давайте сотрудничать!
+*  **Связаться со мной:** `smerdovgeorgy@yandex.ru`
 * Я с радостью рассмотрю ваши идеи и, возможно, адаптирую или применю ваши доработки в рамках официальной экосистемы.
 
 ---
 
-## 📥 Скачать / Download
+##  Скачать / Download
 
 <table align="center">
   <thead>
@@ -98,7 +98,7 @@ This project is licensed under the **GNU GPL v3**. If you have forked this repos
 <br>
 
 <details>
-  <summary>📸 Посмотреть скриншоты приложения / View Screenshots</summary>
+  <summary> Посмотреть скриншоты приложения / View Screenshots</summary>
   <br>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/070dbef2-cbf0-4d0c-b49f-5eaffe8a18c9" alt="Скриншот 1" width="80%" style="margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
