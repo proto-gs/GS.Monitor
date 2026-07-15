@@ -77,7 +77,7 @@ This project is licensed under the **MIT License**. If you have forked this repo
   </thead>
   <tbody>
     <tr>
-      <td align="center"><b>🪟 Windows</b></td>
+      <td align="center"><b>Windows</b></td>
       <td align="center">
         <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.2/gs.monitor-1.0.2.exe">
           <img src="https://shields.io" alt="Windows Setup">
@@ -85,7 +85,7 @@ This project is licensed under the **MIT License**. If you have forked this repo
       </td>
     </tr>
     <tr>
-      <td align="center"><b>🐧 Linux</b></td>
+      <td align="center"><b>Linux</b></td>
       <td align="center">
         <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.2/gs.monitor_1.0.2_amd64.deb">
           <img src="https://shields.io" alt="Linux Deb">
