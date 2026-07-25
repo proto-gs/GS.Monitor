@@ -161,7 +161,7 @@ fun main() {
             onCloseRequest = ::exitApplication,
             state = windowState,
             title = "GS.Monitor",
-            icon = painterResource("icon.png"),
+            icon = painterResource("icon.ico"),
             undecorated = false,
             transparent = false
         ) {
@@ -1578,4 +1578,3 @@ fun AnimatedButton(
         Text(text = text, fontWeight = FontWeight.Bold, color = textColor, fontSize = 16.sp)
     }
 }
-
