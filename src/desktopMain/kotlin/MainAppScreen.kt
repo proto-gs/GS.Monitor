@@ -124,7 +124,19 @@ fun MainAppScreen(
     var responseCookiesText by remember { mutableStateOf("") }
     var lastValidUrl by remember { mutableStateOf("") }
 
-    val scanHistoryList = remember { mutableStateListOf<String>() }
+    val scanHistoryList = remember {
+        val savedHistory = prefs.get("scan_history_items", "")
+        val list = mutableStateListOf<String>()
+        if (savedHistory.isNotEmpty()) {
+            list.addAll(savedHistory.split("\n"))
+        }
+        list
+    }
+
+    val saveHistoryToPrefs: () -> Unit = {
+        val combined = scanHistoryList.joinToString("\n")
+        prefs.put("scan_history_items", combined)
+    }
 
     val httpMethods = listOf("GET", "POST", "HEAD", "PUT")
     var selectedMethodIndex by remember { mutableStateOf(0) }
@@ -142,7 +154,6 @@ fun MainAppScreen(
     val dropdownBgColor = if (isDark) Color(0xFF121212) else Color(0xFFF5F5F5)
     val dropdownTextColor = if (isDark) Color.White else Color.Black
     val cardBgColor = if (isDark) Color(0xFF1A1A1A) else Color(0xFFEEEEEE)
-
 
     val monochromeAccent = if (isDark) Color.White else Color.Black
     val monochromeSecondary = if (isDark) Color(0xFF888888) else Color(0xFF666666)
@@ -193,6 +204,7 @@ fun MainAppScreen(
 
                     val searchLogItem = "[ПОИСК] Ключевое слово: '$query' -> Найдено доменов: ${activeDomains.size}"
                     scanHistoryList.add(0, searchLogItem)
+                    saveHistoryToPrefs()
                     isSearchLoading = false
                 }
             }
@@ -272,6 +284,7 @@ fun MainAppScreen(
                         responseCookiesText = if (cookies.isNotEmpty()) cookies.joinToString("\n") else strings["cookies_empty"] ?: ""
 
                         scanHistoryList.add(0, "[$selectedMethod] $fullUrl -> HTTP $code (VerifySSL: $verifySslSetting)")
+                        saveHistoryToPrefs()
                     }
                 } catch (_: IllegalArgumentException) {
                     resText = strings["status_error"] ?: "Error"
@@ -351,7 +364,7 @@ fun MainAppScreen(
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        "GS HTTP",
+                        "GS Monitor",
                         fontSize = 42.sp,
                         fontWeight = FontWeight.Black,
                         color = textColorPrimary
@@ -929,6 +942,7 @@ fun MainAppScreen(
                     Button(
                         onClick = {
                             scanHistoryList.clear()
+                            saveHistoryToPrefs()
                             urlInput = ""
                             searchQueryInput = ""
                             searchResultsList.clear()
@@ -968,7 +982,10 @@ fun MainAppScreen(
                 ) {
                     Text("История сканов", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = dropdownTextColor)
                     if (scanHistoryList.isNotEmpty()) {
-                        TextButton(onClick = { scanHistoryList.clear() }) {
+                        TextButton(onClick = {
+                            scanHistoryList.clear()
+                            saveHistoryToPrefs()
+                        }) {
                             Text("Очистить", color = monochromeSecondary, fontSize = 12.sp)
                         }
                     }
