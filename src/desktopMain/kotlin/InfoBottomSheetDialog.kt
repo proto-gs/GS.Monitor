@@ -67,6 +67,7 @@ fun InfoBottomSheetDialog(
                     letterSpacing = 1.sp
                 )
 
+
                 TextButton(
                     onClick = { uriHandler.openUri("https://github.com/g60373250-wq/GS.Monitor") },
                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
@@ -84,6 +85,31 @@ fun InfoBottomSheetDialog(
                         )
                         Text("Репозиторий проекта на GitHub ↗", fontSize = 13.sp, color = monochromeAccent)
                     }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(dropdownTextColor.copy(alpha = 0.1f))
+                )
+
+
+                Text(
+                    text = "Документация",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray,
+                    letterSpacing = 1.sp
+                )
+
+
+                TextButton(
+                    onClick = { uriHandler.openUri("https://gs-ht.ru/PRIVACY_GS.Monitor_.html#RU") },
+                    modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Text("Политика конфиденциальности ↗", fontSize = 13.sp, color = monochromeAccent)
                 }
             }
         },
