@@ -50,7 +50,7 @@ compose.desktop {
 
             packageName = "gs.monitor"
             packageVersion = "1.0.3"
-            vendor = "G. Smerdov"
+            vendor = "GS | Ecosystem"
 
             
             includeAllModules = true

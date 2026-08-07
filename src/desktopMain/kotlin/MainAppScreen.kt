@@ -68,14 +68,14 @@ fun MainAppScreen(
     val defaultUserAgent = "GS.Monitor/1.0"
 
     val strings = mapOf(
-        "status_error" to "ERROR",
-        "status_invalid" to "INVALID INPUT",
-        "status_ssl" to "HTTPS SECURE",
-        "status_http" to "HTTP INSECURE",
-        "status_no_server" to "SERVER UNREACHABLE",
+        "status_error" to "Error",
+        "status_invalid" to "Invalid input",
+        "status_ssl" to "Https secure",
+        "status_http" to "Http insecure",
+        "status_no_server" to "Server unreachable",
         "cookies_empty" to "No cookies found",
-        "inspector_title" to "SERVER RESPONSE DATA",
-        "btn_open_browser_emoji" to "OPEN SITE IN BROWSER 🌐",
+        "inspector_title" to "Server response data",
+        "btn_open_browser_emoji" to "Open site in browser",
         "search_log_placeholder" to "Search text inside log...",
         "search_too_big" to "Error: Log is too large",
         "search_error" to "error",
@@ -143,7 +143,7 @@ fun MainAppScreen(
     val dropdownTextColor = if (isDark) Color.White else Color.Black
     val cardBgColor = if (isDark) Color(0xFF1A1A1A) else Color(0xFFEEEEEE)
 
-    // Монохромные/Чёрно-белые акценты интерфейса
+
     val monochromeAccent = if (isDark) Color.White else Color.Black
     val monochromeSecondary = if (isDark) Color(0xFF888888) else Color(0xFF666666)
 
@@ -206,9 +206,9 @@ fun MainAppScreen(
                 (url.startsWith("http:/") && !url.startsWith("http://"))
 
         if (url.isEmpty() || hasSpaces || isInvalidProtocol) {
-            resText = strings["status_error"] ?: "ERROR"
+            resText = strings["status_error"] ?: "Error"
             resTextColor = monochromeAccent
-            safeText = strings["status_invalid"] ?: "INVALID INPUT"
+            safeText = strings["status_invalid"] ?: "Invalid input"
             safeTextColor = monochromeSecondary
             isLoading = false
         } else {
@@ -235,7 +235,7 @@ fun MainAppScreen(
                                 override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
                                 override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
                             })
-                            val sslContext = SSLContext.getInstance("SSL")
+                            val sslContext = SSLContext.getInstance("Ssl")
                             sslContext.init(null, trustAllCerts, java.security.SecureRandom())
                             clientBuilder.sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
                             clientBuilder.hostnameVerifier { _, _ -> true }
@@ -274,14 +274,14 @@ fun MainAppScreen(
                         scanHistoryList.add(0, "[$selectedMethod] $fullUrl -> HTTP $code (VerifySSL: $verifySslSetting)")
                     }
                 } catch (_: IllegalArgumentException) {
-                    resText = strings["status_error"] ?: "ERROR"
+                    resText = strings["status_error"] ?: "Error"
                     resTextColor = monochromeAccent
-                    safeText = strings["status_invalid"] ?: "INVALID INPUT"
+                    safeText = strings["status_invalid"] ?: "Invalid input"
                     safeTextColor = monochromeSecondary
                 } catch (_: IOException) {
-                    resText = strings["status_error"] ?: "ERROR"
+                    resText = strings["status_error"] ?: "Error"
                     resTextColor = monochromeAccent
-                    safeText = strings["status_no_server"] ?: "SERVER UNREACHABLE"
+                    safeText = strings["status_no_server"] ?: "Server unreachable"
                     safeTextColor = monochromeSecondary
                 } finally {
                     isLoading = false
@@ -356,13 +356,6 @@ fun MainAppScreen(
                         fontWeight = FontWeight.Black,
                         color = textColorPrimary
                     )
-                    Text(
-                        "ENGINE BY G. SMERDOV",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = textColorSecondary,
-                        letterSpacing = 2.sp
-                    )
                 }
             }
         } else if (selectedTab == "scan") {
@@ -398,7 +391,7 @@ fun MainAppScreen(
                                 modifier = Modifier.padding(end = 8.dp),
                                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                             ) {
-                                Text("Инспектор", fontSize = 12.sp)
+                                Text("Ответ", fontSize = 12.sp)
                             }
                         }
                         IconButton(
@@ -538,7 +531,7 @@ fun MainAppScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = if (isLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(if (isLoading) "ИДЕТ ЗАПРОС..." else "ЗАПУСТИТЬ СКАН", fontWeight = FontWeight.Bold)
+                        Text(if (isLoading) "Проверка..." else "Запустить скан", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -584,7 +577,7 @@ fun MainAppScreen(
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "ПОИСК ПО СОВПАДЕНИЯМ",
+                            text = "Поиск по совпадениям",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Gray,
@@ -597,7 +590,7 @@ fun MainAppScreen(
                         onValueChange = { searchQueryInput = it },
                         placeholder = {
                             Text(
-                                text = "Введите ключевое слово (например, microsoft)",
+                                text = "Введите ключевое слово (например, example)",
                                 color = Color.Gray.copy(alpha = 0.6f)
                             )
                         },
@@ -639,7 +632,7 @@ fun MainAppScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    text = "НАЙДЕННЫЕ САЙТЫ (${filteredResults.size})",
+                                    text = "Найденые сайты (${filteredResults.size})",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Gray,
@@ -701,7 +694,7 @@ fun MainAppScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = if (isSearchLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(if (isSearchLoading) "ПОИСК..." else "НАЙТИ СОВПАДЕНИЯ", fontWeight = FontWeight.Bold)
+                        Text(if (isSearchLoading) "Поиск." else "Найти совпадения", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -713,7 +706,7 @@ fun MainAppScreen(
             onDismissRequest = { isBottomSheetOpen = false },
             title = {
                 Text(
-                    text = "ИНФОРМАЦИЯ О ПРИЛОЖЕНИИ",
+                    text = "Информация о приложении",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = dropdownTextColor
@@ -736,7 +729,7 @@ fun MainAppScreen(
                     )
 
                     Text(
-                        text = "ИСХОДНЫЙ КОД И РАЗРАБОТКА",
+                        text = "Исходный код и разработка",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Gray,
@@ -768,7 +761,7 @@ fun MainAppScreen(
                     onClick = { isBottomSheetOpen = false },
                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                 ) {
-                    Text("ГОТОВО", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                    Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = dropdownBgColor,
@@ -781,7 +774,7 @@ fun MainAppScreen(
             onDismissRequest = { isWelcomeSettingsOpen = false; isScanSettingsOpen = false },
             title = {
                 Text(
-                    "НАСТРОЙКИ ПРИЛОЖЕНИЯ",
+                    "Настройки приложения",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     color = dropdownTextColor
@@ -795,7 +788,7 @@ fun MainAppScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("СЕТЬ И ПОДКЛЮЧЕНИЕ", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                    Text("Сеть и подключение", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -832,7 +825,7 @@ fun MainAppScreen(
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("БЕЗОПАСНОСТЬ И SSL", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                    Text("Безопасность и Ssl", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -919,7 +912,7 @@ fun MainAppScreen(
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("ОФОРМЛЕНИЕ", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                    Text("Оформление", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
 
                     Button(
                         onClick = { isThemeDialogOpen = true },
@@ -931,7 +924,7 @@ fun MainAppScreen(
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("ДАННЫЕ И ИСТОРИЯ", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                    Text("Данные и история", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
 
                     Button(
                         onClick = {
@@ -956,7 +949,7 @@ fun MainAppScreen(
             },
             confirmButton = {
                 TextButton(onClick = { isWelcomeSettingsOpen = false; isScanSettingsOpen = false }) {
-                    Text("ГОТОВО", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                    Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = dropdownBgColor,
@@ -999,7 +992,7 @@ fun MainAppScreen(
             },
             confirmButton = {
                 TextButton(onClick = { isHistoryOpen = false }) {
-                    Text("ГОТОВО", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                    Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = dropdownBgColor,
@@ -1052,7 +1045,7 @@ fun MainAppScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    strings["inspector_title"] ?: "SERVER RESPONSE DATA",
+                    strings["inspector_title"] ?: "Server response data",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = dropdownTextColor
@@ -1073,7 +1066,7 @@ fun MainAppScreen(
                     modifier = Modifier.fillMaxWidth().height(48.dp)
                 ) {
                     Text(
-                        strings["btn_open_browser_emoji"] ?: "OPEN SITE IN BROWSER 🌐",
+                        strings["btn_open_browser_emoji"] ?: "Open site in browser",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )
@@ -1090,7 +1083,7 @@ fun MainAppScreen(
                         .padding(2.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    listOf("BODY", "HEADERS", "COOKIES").forEach { tab ->
+                    listOf("Body", "Headers", "Cookies").forEach { tab ->
                         val isSelected = activeSearchTab == tab
                         TextButton(
                             onClick = { activeSearchTab = tab },
@@ -1129,8 +1122,8 @@ fun MainAppScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 val currentTextData = when (activeSearchTab) {
-                    "BODY" -> responseBodyText
-                    "HEADERS" -> responseHeadersText
+                    "Body" -> responseBodyText
+                    "Headers" -> responseHeadersText
                     else -> responseCookiesText
                 }
 
