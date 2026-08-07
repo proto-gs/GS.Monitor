@@ -1,3 +1,4 @@
+
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -304,892 +305,184 @@ fun MainAppScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize().alpha(animatedFadeVal.coerceIn(0f, 1f))) {
-        if (selectedTab == "home") {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier.align(Alignment.TopEnd)
-                        .padding(top = 16.dp, end = 24.dp)
-                ) {
-                    IconButton(
-                        onClick = { isMenuExpanded = true },
-                        modifier = Modifier.size(48.dp)
-                            .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.MoreVert,
-                            contentDescription = "Меню",
-                            tint = settingsIconColor,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = isMenuExpanded,
-                        onDismissRequest = { isMenuExpanded = false },
-                        modifier = Modifier.background(dropdownBgColor),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Информация", color = dropdownTextColor) },
-                            onClick = { isMenuExpanded = false; isBottomSheetOpen = true }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Сайт разработчика", color = dropdownTextColor) },
-                            onClick = { isMenuExpanded = false; uriHandler.openUri("https://gs-ht.ru") }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Настройки", color = dropdownTextColor) },
-                            onClick = { isMenuExpanded = false; isWelcomeSettingsOpen = true }
-                        )
-                    }
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .width(360.dp)
-                        .align(Alignment.TopCenter)
-                        .padding(top = 110.dp)
-                ) {
-                    Box(
-                        modifier = Modifier.size(120.dp).clip(CircleShape)
-                            .background(if (isDark) Color.White else Color(0xFF1C1B1F)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "GS",
-                            fontSize = 44.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isDark) Color.Black else Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        "GS Monitor",
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.Black,
-                        color = textColorPrimary
-                    )
-                }
+        when (selectedTab) {
+            "home" -> {
+                HomeTabContent(
+                    isDark = isDark,
+                    textColorPrimary = textColorPrimary,
+                    settingsIconColor = settingsIconColor,
+                    dropdownBgColor = dropdownBgColor,
+                    dropdownTextColor = dropdownTextColor,
+                    uriHandler = uriHandler,
+                    onMenuOpen = { isMenuExpanded = true },
+                    isMenuExpanded = isMenuExpanded,
+                    onMenuDismiss = { isMenuExpanded = false },
+                    onOpenInfo = { isBottomSheetOpen = true },
+                    onOpenSettings = { isWelcomeSettingsOpen = true }
+                )
             }
-        } else if (selectedTab == "scan") {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .background(if (isDark) Color(0xFF0A0A0A) else Color(0xFFFAFAFA))
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = { isHistoryOpen = true },
-                        modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                    ) {
-                        Box(modifier = Modifier.size(24.dp), contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.Filled.History,
-                                contentDescription = "История",
-                                tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                    }
-
-                    Row {
-                        if (lastValidUrl.isNotEmpty()) {
-                            Button(
-                                onClick = { isResponseInspectorSheetOpen = true },
-                                colors = ButtonDefaults.buttonColors(containerColor = monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
-                                modifier = Modifier.padding(end = 8.dp),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                            ) {
-                                Text("Ответ", fontSize = 12.sp)
-                            }
-                        }
-                        IconButton(
-                            onClick = { isScanSettingsOpen = true },
-                            modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Settings,
-                                contentDescription = "Настройки",
-                                tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
-                        .padding(top = 64.dp, start = 24.dp, end = 24.dp),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    TabRow(
-                        selectedTabIndex = selectedMethodIndex,
-                        containerColor = Color.Transparent,
-                        contentColor = monochromeAccent,
-                        divider = {},
-                        indicator = { tabPositions ->
-                            if (selectedMethodIndex < tabPositions.size) {
-                                Box(
-                                    modifier = Modifier
-                                        .tabIndicatorOffset(tabPositions[selectedMethodIndex])
-                                        .height(2.dp)
-                                        .background(monochromeAccent)
-                                )
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(0.6f)
-                    ) {
-                        httpMethods.forEachIndexed { index, method ->
-                            val isSelected = selectedMethodIndex == index
-                            val tabTextColor = when {
-                                isSelected && isDark -> Color.White
-                                isSelected && !isDark -> Color.Black
-                                else -> Color.Gray.copy(alpha = 0.6f)
-                            }
-                            Tab(
-                                selected = isSelected,
-                                onClick = { selectedMethodIndex = index },
-                                text = {
-                                    Text(
-                                        text = method,
-                                        fontSize = 15.sp,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                        color = tabTextColor
-                                    )
-                                }
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    TextField(
-                        value = urlInput,
-                        onValueChange = { urlInput = it },
-                        placeholder = {
-                            Text("Проверить URL", color = Color.Gray.copy(alpha = 0.6f))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = if (isDark) Color.White else Color.Black,
-                            unfocusedTextColor = if (isDark) Color.White else Color.Black,
-                            focusedIndicatorColor = monochromeAccent,
-                            unfocusedIndicatorColor = monochromeSecondary
-                        ),
-                        textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    if (resText.isNotEmpty()) {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = cardBgCardColorInternal(cardBgColor))
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(resTextColor.copy(alpha = 0.15f))
-                                            .border(1.dp, resTextColor.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
-                                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                                    ) {
-                                        Text(
-                                            text = resText,
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = resTextColor
-                                        )
-                                    }
-                                    if (safeText.isNotEmpty()) {
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .background(safeTextColor.copy(alpha = 0.15f))
-                                                .border(1.dp, safeTextColor.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
-                                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                                        ) {
-                                            Text(
-                                                text = safeText,
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = safeTextColor
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
-                        .padding(bottom = 24.dp, start = 24.dp, end = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Button(
-                        onClick = { if (!isLoading) runScan() },
-                        modifier = Modifier.fillMaxWidth().height(50.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (isLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(if (isLoading) "Проверка..." else "Запустить скан", fontWeight = FontWeight.Bold)
-                    }
-                }
+            "scan" -> {
+                ScanTabContent(
+                    isDark = isDark,
+                    monochromeAccent = monochromeAccent,
+                    monochromeSecondary = monochromeSecondary,
+                    cardBgColor = cardBgColor,
+                    httpMethods = httpMethods,
+                    selectedMethodIndex = selectedMethodIndex,
+                    onMethodIndexChange = { selectedMethodIndex = it },
+                    urlInput = urlInput,
+                    onUrlInputChange = { urlInput = it },
+                    resText = resText,
+                    resTextColor = resTextColor,
+                    safeText = safeText,
+                    safeTextColor = safeTextColor,
+                    isLoading = isLoading,
+                    lastValidUrl = lastValidUrl,
+                    onOpenHistory = { isHistoryOpen = true },
+                    onOpenSettings = { isScanSettingsOpen = true },
+                    onOpenInspector = { isResponseInspectorSheetOpen = true },
+                    onRunScan = runScan
+                )
             }
-        } else if (selectedTab == "search") {
-            var selectedZoneIndex by remember { mutableStateOf(0) }
-            val zones = listOf("ВСЕ", "COM", "ORG", "NET", "RU", "IO", "ME", "CO", "CC", "APP", "DEV")
-
-            val filteredResults = remember(searchResultsList, selectedZoneIndex) {
-                if (selectedZoneIndex == 0) {
-                    searchResultsList
-                } else {
-                    val targetZone = "." + zones[selectedZoneIndex].lowercase()
-                    searchResultsList.filter { site -> site.endsWith(targetZone) }
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(if (isDark) Color(0xFF0A0A0A) else Color(0xFFFAFAFA))
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = { isHistoryOpen = true },
-                            modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.History,
-                                contentDescription = "История",
-                                tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Поиск по совпадениям",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Gray,
-                            letterSpacing = 1.sp
-                        )
+            "search" -> {
+                SearchTabContent(
+                    isDark = isDark,
+                    monochromeAccent = monochromeAccent,
+                    monochromeSecondary = monochromeSecondary,
+                    textColorPrimary = textColorPrimary,
+                    cardBgColor = cardBgColor,
+                    searchQueryInput = searchQueryInput,
+                    onSearchQueryChange = { searchQueryInput = it },
+                    searchResultsList = searchResultsList,
+                    isSearchLoading = isSearchLoading,
+                    onOpenHistory = { isHistoryOpen = true },
+                    onRunSearch = runSearch,
+                    onSelectSite = { site ->
+                        urlInput = site
+                        onTabChange("scan")
                     }
-
-                    TextField(
-                        value = searchQueryInput,
-                        onValueChange = { searchQueryInput = it },
-                        placeholder = {
-                            Text(
-                                text = "Введите ключевое слово (например, example)",
-                                color = Color.Gray.copy(alpha = 0.6f)
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedTextColor = if (isDark) Color.White else Color.Black,
-                            unfocusedTextColor = if (isDark) Color.White else Color.Black,
-                            focusedIndicatorColor = monochromeAccent,
-                            unfocusedIndicatorColor = monochromeSecondary
-                        ),
-                        textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
-                    )
-
-                    if (searchResultsList.isNotEmpty() && !searchResultsList.contains("Ничего не найдено")) {
-                        ScrollableTabRow(
-                            selectedTabIndex = selectedZoneIndex,
-                            containerColor = Color.Transparent,
-                            contentColor = monochromeAccent,
-                            edgePadding = 0.dp
-                        ) {
-                            zones.forEachIndexed { index, zone ->
-                                Tab(
-                                    selected = selectedZoneIndex == index,
-                                    onClick = { selectedZoneIndex = index },
-                                    text = { Text(text = zone, fontSize = 12.sp) }
-                                )
-                            }
-                        }
-                    }
-
-                    if (filteredResults.isNotEmpty()) {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = cardBgColor)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    text = "Найденые сайты (${filteredResults.size})",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Gray,
-                                    letterSpacing = 1.sp
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                val searchScrollState = rememberScrollState()
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .heightIn(max = 240.dp)
-                                        .background(
-                                            if (isDark) Color(0xFF141414) else Color(0xFFEFEFEF),
-                                            RoundedCornerShape(12.dp)
-                                        )
-                                        .padding(8.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .verticalScroll(searchScrollState)
-                                            .padding(end = 16.dp),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        filteredResults.forEach { site ->
-                                            Text(
-                                                text = site,
-                                                fontSize = 14.sp,
-                                                color = textColorPrimary,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                                                    .pointerInput(Unit) {
-                                                        detectTapGestures(onTap = {
-                                                            if (site != "Ничего не найдено") {
-                                                                urlInput = site
-                                                                onTabChange("scan")
-                                                            }
-                                                        })
-                                                    }
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = { if (!isSearchLoading) runSearch() },
-                        modifier = Modifier.fillMaxWidth().height(50.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (isSearchLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(if (isSearchLoading) "Поиск." else "Найти совпадения", fontWeight = FontWeight.Bold)
-                    }
-                }
+                )
             }
         }
     }
 
     if (isBottomSheetOpen) {
-        AlertDialog(
-            onDismissRequest = { isBottomSheetOpen = false },
-            title = {
-                Text(
-                    text = "Информация о приложении",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = dropdownTextColor
-                )
-            },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text("Разработчик: Георгий Смердов", fontSize = 14.sp, color = dropdownTextColor)
-                    Text("Версия: $version", fontSize = 14.sp, color = dropdownTextColor)
-                    Text("Скачано: GitHub", fontSize = 14.sp, color = dropdownTextColor)
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(dropdownTextColor.copy(alpha = 0.1f))
-                    )
-
-                    Text(
-                        text = "Исходный код и разработка",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Gray,
-                        letterSpacing = 1.sp
-                    )
-
-                    TextButton(
-                        onClick = { uriHandler.openUri("https://github.com/g60373250-wq/GS.Monitor") },
-                        modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource("github.png"),
-                                contentDescription = "GitHub",
-                                tint = dropdownTextColor,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text("Репозиторий проекта на GitHub ↗", fontSize = 13.sp, color = monochromeAccent)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { isBottomSheetOpen = false },
-                    modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
-                ) {
-                    Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
-                }
-            },
-            containerColor = dropdownBgColor,
-            shape = RoundedCornerShape(24.dp)
+        InfoBottomSheetDialog(
+            version = version,
+            dropdownBgColor = dropdownBgColor,
+            dropdownTextColor = dropdownTextColor,
+            monochromeAccent = monochromeAccent,
+            uriHandler = uriHandler,
+            onDismiss = { isBottomSheetOpen = false }
         )
     }
 
     if (isWelcomeSettingsOpen || isScanSettingsOpen) {
-        AlertDialog(
-            onDismissRequest = { isWelcomeSettingsOpen = false; isScanSettingsOpen = false },
-            title = {
-                Text(
-                    "Настройки приложения",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = dropdownTextColor
-                )
-            },
-            text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .width(420.dp)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text("Сеть и подключение", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Авто-редирект", color = dropdownTextColor, fontSize = 14.sp)
-                        Switch(
-                            checked = followRedirectsSetting,
-                            onCheckedChange = {
-                                followRedirectsSetting = it
-                                prefs.putBoolean("follow_redirects", it)
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = if (isDark) Color.Black else Color.White,
-                                checkedTrackColor = monochromeAccent
-                            )
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Таймаут запроса: ${requestTimeoutSetting}с", color = dropdownTextColor, fontSize = 14.sp)
-                    Slider(
-                        value = requestTimeoutSetting.toFloat(),
-                        onValueChange = {
-                            requestTimeoutSetting = it.toInt()
-                            prefs.putInt("request_timeout", it.toInt())
-                        },
-                        valueRange = 2f..30f,
-                        steps = 28,
-                        colors = SliderDefaults.colors(
-                            thumbColor = monochromeAccent,
-                            activeTrackColor = monochromeAccent
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Безопасность и Ssl", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Проверять SSL", color = dropdownTextColor, fontSize = 14.sp)
-                            Text("(строгая проверка сертификата)", color = Color.Gray, fontSize = 11.sp)
-                        }
-                        Switch(
-                            checked = verifySslSetting,
-                            onCheckedChange = {
-                                verifySslSetting = it
-                                prefs.putBoolean("verify_ssl", it)
-                                if (it) {
-                                    ignoreSslErrorsSetting = false
-                                    prefs.putBoolean("ignore_ssl", false)
-                                }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = if (isDark) Color.Black else Color.White,
-                                checkedTrackColor = monochromeAccent
-                            )
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Игнорировать SSL ошибки", color = dropdownTextColor, fontSize = 14.sp)
-                            Text("(самоподписанные сертификаты)", color = Color.Gray, fontSize = 11.sp)
-                        }
-                        Switch(
-                            checked = ignoreSslErrorsSetting,
-                            onCheckedChange = {
-                                ignoreSslErrorsSetting = it
-                                prefs.putBoolean("ignore_ssl", it)
-                                if (it) {
-                                    verifySslSetting = false
-                                    prefs.putBoolean("verify_ssl", false)
-                                }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = if (isDark) Color.Black else Color.White,
-                                checkedTrackColor = monochromeAccent
-                            )
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("User-Agent", color = dropdownTextColor, fontSize = 14.sp)
-                        TextButton(
-                            onClick = {
-                                customUserAgentSetting = defaultUserAgent
-                                prefs.put("user_agent", defaultUserAgent)
-                            },
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Text("По умолчанию", fontSize = 12.sp, color = monochromeAccent)
-                        }
-                    }
-                    TextField(
-                        value = customUserAgentSetting,
-                        onValueChange = {
-                            customUserAgentSetting = it
-                            prefs.put("user_agent", it)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        textStyle = TextStyle(fontSize = 13.sp),
-                        colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = monochromeAccent,
-                            unfocusedIndicatorColor = monochromeSecondary
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Оформление", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
-
-                    Button(
-                        onClick = { isThemeDialogOpen = true },
-                        modifier = Modifier.fillMaxWidth().height(40.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = monochromeAccent, contentColor = if (isDark) Color.Black else Color.White)
-                    ) {
-                        Text("Изменить тему оформления", fontSize = 12.sp)
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Данные и история", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
-
-                    Button(
-                        onClick = {
-                            scanHistoryList.clear()
-                            saveHistoryToPrefs()
-                            urlInput = ""
-                            searchQueryInput = ""
-                            searchResultsList.clear()
-                            resText = ""
-                            safeText = ""
-                            responseBodyText = ""
-                            responseHeadersText = ""
-                            responseCookiesText = ""
-                            lastValidUrl = ""
-                        },
-                        modifier = Modifier.fillMaxWidth().height(40.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (isDark) Color(0xFF333333) else Color(0xFFCCCCCC), contentColor = dropdownTextColor),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text("Очистить историю и ввод", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
+        SettingsDialog(
+            isDark = isDark,
+            dropdownBgColor = dropdownBgColor,
+            dropdownTextColor = dropdownTextColor,
+            monochromeAccent = monochromeAccent,
+            monochromeSecondary = monochromeSecondary,
+            followRedirectsSetting = followRedirectsSetting,
+            onFollowRedirectsChange = { followRedirectsSetting = it; prefs.putBoolean("follow_redirects", it) },
+            requestTimeoutSetting = requestTimeoutSetting,
+            onRequestTimeoutChange = { requestTimeoutSetting = it; prefs.putInt("request_timeout", it) },
+            verifySslSetting = verifySslSetting,
+            onVerifySslChange = {
+                verifySslSetting = it
+                prefs.putBoolean("verify_ssl", it)
+                if (it) {
+                    ignoreSslErrorsSetting = false
+                    prefs.putBoolean("ignore_ssl", false)
                 }
             },
-            confirmButton = {
-                TextButton(onClick = { isWelcomeSettingsOpen = false; isScanSettingsOpen = false }) {
-                    Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
+            ignoreSslErrorsSetting = ignoreSslErrorsSetting,
+            onIgnoreSslChange = {
+                ignoreSslErrorsSetting = it
+                prefs.putBoolean("ignore_ssl", it)
+                if (it) {
+                    verifySslSetting = false
+                    prefs.putBoolean("verify_ssl", false)
                 }
             },
-            containerColor = dropdownBgColor,
-            shape = RoundedCornerShape(24.dp)
+            customUserAgentSetting = customUserAgentSetting,
+            defaultUserAgent = defaultUserAgent,
+            onUserAgentChange = {
+                customUserAgentSetting = it
+                prefs.put("user_agent", it)
+            },
+            onOpenThemeDialog = { isThemeDialogOpen = true },
+            onClearData = {
+                scanHistoryList.clear()
+                saveHistoryToPrefs()
+                urlInput = ""
+                searchQueryInput = ""
+                searchResultsList.clear()
+                resText = ""
+                safeText = ""
+                responseBodyText = ""
+                responseHeadersText = ""
+                responseCookiesText = ""
+                lastValidUrl = ""
+            },
+            onDismiss = { isWelcomeSettingsOpen = false; isScanSettingsOpen = false }
         )
     }
 
     if (isHistoryOpen) {
-        AlertDialog(
-            onDismissRequest = { isHistoryOpen = false },
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("История сканов", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = dropdownTextColor)
-                    if (scanHistoryList.isNotEmpty()) {
-                        TextButton(onClick = {
-                            scanHistoryList.clear()
-                            saveHistoryToPrefs()
-                        }) {
-                            Text("Очистить", color = monochromeSecondary, fontSize = 12.sp)
-                        }
-                    }
-                }
+        HistoryDialog(
+            scanHistoryList = scanHistoryList,
+            dropdownBgColor = dropdownBgColor,
+            dropdownTextColor = dropdownTextColor,
+            monochromeAccent = monochromeAccent,
+            monochromeSecondary = monochromeSecondary,
+            onClearHistory = {
+                scanHistoryList.clear()
+                saveHistoryToPrefs()
             },
-            text = {
-                Box(modifier = Modifier.fillMaxWidth().width(450.dp).heightIn(max = 300.dp)) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        if (scanHistoryList.isEmpty()) {
-                            Text("История проверок пуста", color = Color.Gray, fontSize = 15.sp)
-                        } else {
-                            scanHistoryList.forEach { logItem ->
-                                Text(logItem, color = dropdownTextColor, fontSize = 13.sp, fontFamily = FontFamily.Monospace)
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { isHistoryOpen = false }) {
-                    Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
-                }
-            },
-            containerColor = dropdownBgColor,
-            shape = RoundedCornerShape(24.dp)
+            onDismiss = { isHistoryOpen = false }
         )
     }
 
     if (isThemeDialogOpen) {
-        AlertDialog(
-            onDismissRequest = { isThemeDialogOpen = false },
-            title = { Text("Выберите тему", color = dropdownTextColor) },
-            text = {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = appThemeSetting == "system", onClick = { onThemeChange("system"); isThemeDialogOpen = false }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                        Text("Как в системе", color = dropdownTextColor)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = appThemeSetting == "light", onClick = { onThemeChange("light"); isThemeDialogOpen = false }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                        Text("Светлая", color = dropdownTextColor)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = appThemeSetting == "dark", onClick = { onThemeChange("dark"); isThemeDialogOpen = false }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                        Text("Тёмная", color = dropdownTextColor)
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { isThemeDialogOpen = false }) {
-                    Text("Отмена", color = monochromeAccent)
-                }
-            },
-            containerColor = dropdownBgColor,
-            shape = RoundedCornerShape(24.dp)
+        ThemeSelectionDialog(
+            appThemeSetting = appThemeSetting,
+            dropdownBgColor = dropdownBgColor,
+            dropdownTextColor = dropdownTextColor,
+            monochromeAccent = monochromeAccent,
+            onThemeChange = onThemeChange,
+            onDismiss = { isThemeDialogOpen = false }
         )
     }
 
     if (isResponseInspectorSheetOpen) {
-        ModalBottomSheet(
-            onDismissRequest = { isResponseInspectorSheetOpen = false },
-            sheetState = inspectorSheetState,
-            containerColor = dropdownBgColor,
-            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.9f)
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    strings["inspector_title"] ?: "Server response data",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = dropdownTextColor
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        if (lastValidUrl.isNotEmpty()) {
-                            uriHandler.openUri(lastValidUrl)
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = monochromeAccent,
-                        contentColor = if (isDark) Color.Black else Color.White
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth().height(48.dp)
-                ) {
-                    Text(
-                        strings["btn_open_browser_emoji"] ?: "Open site in browser",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            if (isDark) Color(0xFF1A1A22) else Color(0xFFE0E0E5),
-                            RoundedCornerShape(8.dp)
-                        )
-                        .padding(2.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    listOf("Body", "Headers", "Cookies").forEach { tab ->
-                        val isSelected = activeSearchTab == tab
-                        TextButton(
-                            onClick = { activeSearchTab = tab },
-                            modifier = Modifier
-                                .weight(1f)
-                                .background(
-                                    if (isSelected) (if (isDark) Color(0xFF333338) else Color.White) else Color.Transparent,
-                                    RoundedCornerShape(6.dp)
-                                )
-                        ) {
-                            Text(
-                                tab,
-                                color = if (isSelected) textColorPrimary else textColorSecondary,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = {
-                        Text(strings["search_log_placeholder"] ?: "Search text inside log...")
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = monochromeAccent,
-                        unfocusedIndicatorColor = monochromeSecondary
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-
-                val currentTextData = when (activeSearchTab) {
-                    "Body" -> responseBodyText
-                    "Headers" -> responseHeadersText
-                    else -> responseCookiesText
-                }
-
-                val filteredText = if (searchQuery.isEmpty()) {
-                    currentTextData
-                } else {
-                    try {
-                        if (currentTextData.length > 500_000) {
-                            strings["search_too_big"] ?: "Error: Log is too large"
-                        } else {
-                            currentTextData.lines()
-                                .filter { it.contains(searchQuery, ignoreCase = true) }
-                                .joinToString("\n")
-                        }
-                    } catch (_: Exception) {
-                        strings["search_error"] ?: "error"
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .background(
-                            if (isDark) Color(0xFF121215) else Color(0xFFEBEBEF),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            1.dp,
-                            if (isDark) Color(0xFF2E2E35) else Color(0xFFD0D0D8),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        item {
-                            Text(
-                                text = if (filteredText.trim().isEmpty() && searchQuery.isNotEmpty())
-                                    (strings["not_found"] ?: "Nothing found") else filteredText,
-                                color = textColorPrimary,
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily.Monospace
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        ResponseInspectorBottomSheet(
+            inspectorSheetState = inspectorSheetState,
+            dropdownBgColor = dropdownBgColor,
+            dropdownTextColor = dropdownTextColor,
+            monochromeAccent = monochromeAccent,
+            monochromeSecondary = monochromeSecondary,
+            textColorPrimary = textColorPrimary,
+            textColorSecondary = textColorSecondary,
+            isDark = isDark,
+            strings = strings,
+            lastValidUrl = lastValidUrl,
+            uriHandler = uriHandler,
+            activeSearchTab = activeSearchTab,
+            onActiveSearchTabChange = { activeSearchTab = it },
+            searchQuery = searchQuery,
+            onSearchQueryChange = { searchQuery = it },
+            responseBodyText = responseBodyText,
+            responseHeadersText = responseHeadersText,
+            responseCookiesText = responseCookiesText,
+            onDismiss = { isResponseInspectorSheetOpen = false }
+        )
     }
 }
 
+
+
+
 private fun cardBgCardColorInternal(fallback: Color): Color = fallback
+
