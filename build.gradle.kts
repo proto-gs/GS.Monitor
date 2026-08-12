@@ -17,7 +17,7 @@ kotlin {
     }
 
     sourceSets {
-        
+
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -36,6 +36,9 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "MainKt"
+
+        buildTypes.release.proguard.isEnabled.set(false)
+
         nativeDistributions {
             val currentOs = System.getProperty("os.name").lowercase()
 
@@ -52,7 +55,6 @@ compose.desktop {
             packageVersion = "1.0.3"
             vendor = "GS Ecosystem"
 
-            
             includeAllModules = true
 
             windows {
@@ -76,12 +78,19 @@ compose.desktop {
 
 
 
+tasks.register<Tar>("packageTarGz") {
+    archiveFileName.set("gs-monitor-${project.version}.tar.gz")
+    destinationDirectory.set(layout.buildDirectory.dir("distributions"))
+    compression = Compression.GZIP
 
 
+    dependsOn(provider {
+        tasks.matching { it.name.contains("Distributable", ignoreCase = true) }
+    })
 
 
-
-
+    from(layout.buildDirectory.dir("compose/binaries/main-release/app"))
+}
 
 
 
