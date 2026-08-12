@@ -54,7 +54,7 @@ import androidx.compose.material.icons.filled.FindInPage
 
 
 
-const val VERSION = "1.0.2"
+const val VERSION = "1.0.3"
 val currentUserId = System.getProperty("user.name") ?: "unknown_user"
 
 
