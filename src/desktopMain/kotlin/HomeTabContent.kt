@@ -54,7 +54,7 @@ fun HomeTabContent(
             ) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "Меню",
+                    contentDescription = "Menu",
                     tint = settingsIconColor,
                     modifier = Modifier.size(28.dp)
                 )
@@ -66,15 +66,15 @@ fun HomeTabContent(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 DropdownMenuItem(
-                    text = { Text("Информация", color = dropdownTextColor) },
+                    text = { Text("Information", color = dropdownTextColor) },
                     onClick = { onMenuDismiss(); onOpenInfo() }
                 )
                 DropdownMenuItem(
-                    text = { Text("Сайт разработчика", color = dropdownTextColor) },
+                    text = { Text("Developer's website", color = dropdownTextColor) },
                     onClick = { onMenuDismiss(); uriHandler.openUri("https://gs-ht.ru") }
                 )
                 DropdownMenuItem(
-                    text = { Text("Настройки", color = dropdownTextColor) },
+                    text = { Text("Settings", color = dropdownTextColor) },
                     onClick = { onMenuDismiss(); onOpenSettings() }
                 )
             }

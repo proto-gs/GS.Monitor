@@ -61,7 +61,7 @@ fun SearchTabContent(
     onSelectSite: (String) -> Unit
 ) {
     var selectedZoneIndex by remember { mutableStateOf(0) }
-    val zones = listOf("ВСЕ", "COM", "ORG", "NET", "RU", "IO", "ME", "CO", "CC", "APP", "DEV")
+    val zones = listOf("ALL", "COM", "ORG", "NET", "RU", "IO", "ME", "CO", "CC", "APP", "DEV")
 
     val filteredResults = remember(searchResultsList, selectedZoneIndex) {
         if (selectedZoneIndex == 0) {
@@ -94,14 +94,14 @@ fun SearchTabContent(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.History,
-                        contentDescription = "История",
+                        contentDescription = "Story",
                         tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
                         modifier = Modifier.size(22.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Поиск по совпадениям",
+                    text = "Search by matches",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray,
@@ -114,7 +114,7 @@ fun SearchTabContent(
                 onValueChange = onSearchQueryChange,
                 placeholder = {
                     Text(
-                        text = "Введите ключевое слово (например, example)",
+                        text = "Enter a keyword (e.g. example)",
                         color = Color.Gray.copy(alpha = 0.6f)
                     )
                 },
@@ -131,7 +131,7 @@ fun SearchTabContent(
                 textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
             )
 
-            if (searchResultsList.isNotEmpty() && !searchResultsList.contains("Ничего не найдено")) {
+            if (searchResultsList.isNotEmpty() && !searchResultsList.contains("Nothing found")) {
                 ScrollableTabRow(
                     selectedTabIndex = selectedZoneIndex,
                     containerColor = Color.Transparent,
@@ -156,7 +156,7 @@ fun SearchTabContent(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Найденые сайты (${filteredResults.size})",
+                            text = "Sites found (${filteredResults.size})",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Gray,
@@ -192,7 +192,7 @@ fun SearchTabContent(
                                             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                             .pointerInput(Unit) {
                                                 detectTapGestures(onTap = {
-                                                    if (site != "Ничего не найдено") {
+                                                    if (site != "Nothing found") {
                                                         onSelectSite(site)
                                                     }
                                                 })
@@ -217,7 +217,7 @@ fun SearchTabContent(
                 colors = ButtonDefaults.buttonColors(containerColor = if (isSearchLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(if (isSearchLoading) "Поиск." else "Найти совпадения", fontWeight = FontWeight.Bold)
+                Text(if (isSearchLoading) "Search." else "Find matches", fontWeight = FontWeight.Bold)
             }
         }
     }

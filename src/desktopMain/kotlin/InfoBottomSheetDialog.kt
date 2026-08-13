@@ -37,7 +37,7 @@ fun InfoBottomSheetDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Информация о приложении",
+                text = "Application information",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = dropdownTextColor
@@ -48,9 +48,9 @@ fun InfoBottomSheetDialog(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text("Разработчик: Георгий Смердов", fontSize = 14.sp, color = dropdownTextColor)
-                Text("Версия: $version", fontSize = 14.sp, color = dropdownTextColor)
-                Text("Скачано: GitHub", fontSize = 14.sp, color = dropdownTextColor)
+                Text("Developer: Georgy Smerdov", fontSize = 14.sp, color = dropdownTextColor)
+                Text("Version: $version", fontSize = 14.sp, color = dropdownTextColor)
+                Text("Downloaded: GitHub", fontSize = 14.sp, color = dropdownTextColor)
 
                 Box(
                     modifier = Modifier
@@ -60,7 +60,7 @@ fun InfoBottomSheetDialog(
                 )
 
                 Text(
-                    text = "Исходный код и разработка",
+                    text = "Source code and development",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray,
@@ -83,7 +83,7 @@ fun InfoBottomSheetDialog(
                             tint = dropdownTextColor,
                             modifier = Modifier.size(18.dp)
                         )
-                        Text("Репозиторий проекта на GitHub ↗", fontSize = 13.sp, color = monochromeAccent)
+                        Text("Project repository on GitHub ↗", fontSize = 13.sp, color = monochromeAccent)
                     }
                 }
 
@@ -96,7 +96,7 @@ fun InfoBottomSheetDialog(
 
 
                 Text(
-                    text = "Документация",
+                    text = "Documentation",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray,
@@ -105,11 +105,11 @@ fun InfoBottomSheetDialog(
 
 
                 TextButton(
-                    onClick = { uriHandler.openUri("https://gs-ht.ru/PRIVACY_GS.Monitor_.html#RU") },
+                    onClick = { uriHandler.openUri("https://gs-ht.ru/PRIVACY_GS.Monitor_.html#EN") },
                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
                     contentPadding = PaddingValues(0.dp)
                 ) {
-                    Text("Политика конфиденциальности ↗", fontSize = 13.sp, color = monochromeAccent)
+                    Text("Privacy policy ↗", fontSize = 13.sp, color = monochromeAccent)
                 }
             }
         },
@@ -118,7 +118,7 @@ fun InfoBottomSheetDialog(
                 onClick = onDismiss,
                 modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
             ) {
-                Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                Text("Ready", color = monochromeAccent, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = dropdownBgColor,

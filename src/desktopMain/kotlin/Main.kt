@@ -174,7 +174,7 @@ fun main() {
                                         modifier = Modifier.size(32.dp)
                                             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                     ) {
-                                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Свернуть", tint = Color.Gray)
+                                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Collapse", tint = Color.Gray)
                                     }
                                 }
                             }
@@ -184,7 +184,7 @@ fun main() {
                                     modifier = Modifier.size(32.dp)
                                         .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                 ) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Развернуть", tint = Color.Gray)
+                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Expand", tint = Color.Gray)
                                 }
                             }
 
@@ -204,14 +204,14 @@ fun main() {
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Home,
-                                        contentDescription = "Главная",
+                                        contentDescription = "Home",
                                         tint = if (selectedTab == "home") Color(0xFF2979FF) else Color.Gray
                                     )
                                 }
                                 if (isSidebarExpanded) {
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        "Главная",
+                                        "Home",
                                         color = if (selectedTab == "home") Color(0xFF2979FF) else Color.Gray,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -230,14 +230,14 @@ fun main() {
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Search,
-                                        contentDescription = "Сканер",
+                                        contentDescription = "Scanner",
                                         tint = if (selectedTab == "scan") Color(0xFF2979FF) else Color.Gray
                                     )
                                 }
                                 if (isSidebarExpanded) {
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        "Сканер URL",
+                                        "URL Scanner",
                                         color = if (selectedTab == "scan") Color(0xFF2979FF) else Color.Gray,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -257,14 +257,14 @@ fun main() {
                                     Icon(
 
                                         imageVector = Icons.Filled.FindInPage,
-                                        contentDescription = "Поиск совпадений",
+                                        contentDescription = "Search for matches",
                                         tint = if (selectedTab == "search") Color(0xFF2979FF) else Color.Gray
                                     )
                                 }
                                 if (isSidebarExpanded) {
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        "Поиск совпадений",
+                                        "Search for matches",
                                         color = if (selectedTab == "search") Color(0xFF2979FF) else Color.Gray,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -286,4 +286,3 @@ fun main() {
         }
     }
 }
-

@@ -38,10 +38,10 @@ fun HistoryDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("История сканов", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = dropdownTextColor)
+                Text("Scan history", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = dropdownTextColor)
                 if (scanHistoryList.isNotEmpty()) {
                     TextButton(onClick = onClearHistory) {
-                        Text("Очистить", color = monochromeSecondary, fontSize = 12.sp)
+                        Text("Clear", color = monochromeSecondary, fontSize = 12.sp)
                     }
                 }
             }
@@ -53,7 +53,7 @@ fun HistoryDialog(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     if (scanHistoryList.isEmpty()) {
-                        Text("История проверок пуста", color = Color.Gray, fontSize = 15.sp)
+                        Text("The check history is empty", color = Color.Gray, fontSize = 15.sp)
                     } else {
                         scanHistoryList.forEach { logItem ->
                             Text(logItem, color = dropdownTextColor, fontSize = 13.sp, fontFamily = FontFamily.Monospace)
@@ -64,7 +64,7 @@ fun HistoryDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                Text("Ready", color = monochromeAccent, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = dropdownBgColor,

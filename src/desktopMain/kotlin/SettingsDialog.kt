@@ -56,7 +56,7 @@ fun SettingsDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Настройки приложения",
+                "Application settings",
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 color = dropdownTextColor
@@ -70,13 +70,13 @@ fun SettingsDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Сеть и подключение", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text("Network and Connectivity", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Авто-редирект", color = dropdownTextColor, fontSize = 14.sp)
+                    Text("Auto-redirect", color = dropdownTextColor, fontSize = 14.sp)
                     Switch(
                         checked = followRedirectsSetting,
                         onCheckedChange = onFollowRedirectsChange,
@@ -88,7 +88,7 @@ fun SettingsDialog(
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Таймаут запроса: ${requestTimeoutSetting}с", color = dropdownTextColor, fontSize = 14.sp)
+                Text("Request timeout: ${requestTimeoutSetting}с", color = dropdownTextColor, fontSize = 14.sp)
                 Slider(
                     value = requestTimeoutSetting.toFloat(),
                     onValueChange = { onRequestTimeoutChange(it.toInt()) },
@@ -101,7 +101,7 @@ fun SettingsDialog(
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Безопасность и Ssl", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text("Security and SSL", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -109,8 +109,8 @@ fun SettingsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Проверять SSL", color = dropdownTextColor, fontSize = 14.sp)
-                        Text("(строгая проверка сертификата)", color = Color.Gray, fontSize = 11.sp)
+                        Text("Check SSL", color = dropdownTextColor, fontSize = 14.sp)
+                        Text("(Strict certificate verification)", color = Color.Gray, fontSize = 11.sp)
                     }
                     Switch(
                         checked = verifySslSetting,
@@ -128,8 +128,8 @@ fun SettingsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Игнорировать SSL ошибки", color = dropdownTextColor, fontSize = 14.sp)
-                        Text("(самоподписанные сертификаты)", color = Color.Gray, fontSize = 11.sp)
+                        Text("Ignore SSL errors", color = dropdownTextColor, fontSize = 14.sp)
+                        Text("(self-signed certificates)", color = Color.Gray, fontSize = 11.sp)
                     }
                     Switch(
                         checked = ignoreSslErrorsSetting,
@@ -152,7 +152,7 @@ fun SettingsDialog(
                         onClick = { onUserAgentChange(defaultUserAgent) },
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text("По умолчанию", fontSize = 12.sp, color = monochromeAccent)
+                        Text("Default", fontSize = 12.sp, color = monochromeAccent)
                     }
                 }
                 TextField(
@@ -168,7 +168,7 @@ fun SettingsDialog(
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Оформление", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text("Registration", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
 
                 Button(
                     onClick = onOpenThemeDialog,
@@ -176,11 +176,11 @@ fun SettingsDialog(
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = monochromeAccent, contentColor = if (isDark) Color.Black else Color.White)
                 ) {
-                    Text("Изменить тему оформления", fontSize = 12.sp)
+                    Text("Change the design theme", fontSize = 12.sp)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Данные и история", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text("Data and history", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
 
                 Button(
                     onClick = onClearData,
@@ -188,13 +188,13 @@ fun SettingsDialog(
                     colors = ButtonDefaults.buttonColors(containerColor = if (isDark) Color(0xFF333333) else Color(0xFFCCCCCC), contentColor = dropdownTextColor),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Очистить историю и ввод", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Clear history and input", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Готово", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                Text("Ready", color = monochromeAccent, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = dropdownBgColor,

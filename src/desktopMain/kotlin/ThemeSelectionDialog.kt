@@ -22,26 +22,26 @@ fun ThemeSelectionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Выберите тему", color = dropdownTextColor) },
+        title = { Text("Select a topic", color = dropdownTextColor) },
         text = {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = appThemeSetting == "system", onClick = { onThemeChange("system"); onDismiss() }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                    Text("Как в системе", color = dropdownTextColor)
+                    Text("As in the system", color = dropdownTextColor)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = appThemeSetting == "light", onClick = { onThemeChange("light"); onDismiss() }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                    Text("Светлая", color = dropdownTextColor)
+                    Text("Light", color = dropdownTextColor)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = appThemeSetting == "dark", onClick = { onThemeChange("dark"); onDismiss() }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                    Text("Тёмная", color = dropdownTextColor)
+                    Text("Dark", color = dropdownTextColor)
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Отмена", color = monochromeAccent)
+                Text("Cancel", color = monochromeAccent)
             }
         },
         containerColor = dropdownBgColor,

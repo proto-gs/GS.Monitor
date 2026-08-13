@@ -79,7 +79,7 @@ fun ScanTabContent(
                 Box(modifier = Modifier.size(24.dp), contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Filled.History,
-                        contentDescription = "История",
+                        contentDescription = "Story",
                         tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
                         modifier = Modifier.size(22.dp)
                     )
@@ -94,7 +94,7 @@ fun ScanTabContent(
                         modifier = Modifier.padding(end = 8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                     ) {
-                        Text("Ответ", fontSize = 12.sp)
+                        Text("Answer", fontSize = 12.sp)
                     }
                 }
                 IconButton(
@@ -103,7 +103,7 @@ fun ScanTabContent(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Настройки",
+                        contentDescription = "Settings",
                         tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
                         modifier = Modifier.size(24.dp)
                     )
@@ -160,7 +160,7 @@ fun ScanTabContent(
                 value = urlInput,
                 onValueChange = onUrlInputChange,
                 placeholder = {
-                    Text("Проверить URL", color = Color.Gray.copy(alpha = 0.6f))
+                    Text("Check URL", color = Color.Gray.copy(alpha = 0.6f))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -234,7 +234,7 @@ fun ScanTabContent(
                 colors = ButtonDefaults.buttonColors(containerColor = if (isLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(if (isLoading) "Проверка..." else "Запустить скан", fontWeight = FontWeight.Bold)
+                Text(if (isLoading) "Examination..." else "Run scan", fontWeight = FontWeight.Bold)
             }
         }
     }
