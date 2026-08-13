@@ -23,10 +23,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.awt.Cursor
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun HomeTabContent(
@@ -92,13 +95,14 @@ fun HomeTabContent(
                     .background(if (isDark) Color.White else Color(0xFF1C1B1F)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "GS",
-                    fontSize = 44.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (isDark) Color.Black else Color.White
+                Image(
+                    painter = painterResource("ic_gs_ht.png"), // Используем строку для Desktop
+                    contentDescription = "Аватар",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
+
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 "GS Monitor",

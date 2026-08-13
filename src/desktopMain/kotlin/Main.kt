@@ -41,7 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -49,7 +49,9 @@ import okhttp3.OkHttpClient
 import java.awt.Cursor
 import java.lang.System
 import androidx.compose.material.icons.filled.FindInPage
-
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
 
 
 
@@ -161,13 +163,14 @@ fun main() {
                                         .background(if (isDarkTheme) Color.White else Color(0xFF1C1B1F)),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        "GS",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (isDarkTheme) Color.Black else Color.White
+                                    Image(
+                                        painter = painterResource("ic_gs_ht.png"),
+                                        contentDescription = "Аватар",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
                                     )
                                 }
+
                                 if (isSidebarExpanded) {
                                     IconButton(
                                         onClick = { isSidebarExpanded = false },
