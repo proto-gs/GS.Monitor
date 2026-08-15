@@ -49,10 +49,7 @@ Using GS.HTTP, you can also:<br><br>
 • Use popular HTTP methods: GET, POST, HEAD, PUT, DELETE, PATCH, OPTIONS, TRACE, CONNECT<br><br>
 • Save everything locally in the request history<br><br>
 • Find websites by entering their names and find out which domains they are located under in the browser
-
-
-
-<br>
+## Clone repository | Building app | Working with the project
 
 <details>
   <summary>View Screenshots</summary>
