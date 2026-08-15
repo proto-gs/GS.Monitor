@@ -114,9 +114,10 @@ fun MainAppScreen(
         prefs.put("scan_history_items", combined)
     }
 
-    val httpMethods = listOf("GET", "POST", "HEAD", "PUT")
+    val httpMethods = listOf("GET", "POST", "PUT", "HEAD", "DELETE", "PATCH", "OPTIONS", "TRACE", "CONNECT")
     var selectedMethodIndex by remember { mutableStateOf(0) }
     val selectedMethod = httpMethods[selectedMethodIndex]
+
 
     val isDark = when (appThemeSetting) {
         "dark" -> true
@@ -244,7 +245,13 @@ fun MainAppScreen(
                         "POST" -> requestBuilder.post(emptyBody)
                         "PUT" -> requestBuilder.put(emptyBody)
                         "HEAD" -> requestBuilder.head()
+                        "DELETE" -> requestBuilder.delete(emptyBody)
+                        "PATCH" -> requestBuilder.patch(emptyBody)
+                        "OPTIONS" -> requestBuilder.method("OPTIONS", null)
+                        "TRACE" -> requestBuilder.method("TRACE", null)
+                        "CONNECT" -> requestBuilder.method("CONNECT", null)
                     }
+
 
                     client.newCall(requestBuilder.build()).execute().use { response ->
                         val code = response.code
