@@ -4,7 +4,7 @@
   <a href="https://github.com/proto-gs/GS.Monitor/releases"><img src="https://img.shields.io/badge/Release-v1.0.2-orange?style=for-the-badge" alt="Release"></a>
 </p>
 
-<h1 align="start"> GS.Monitor</h1>
+# GS.Monitor
 
 <p align="start">
   <b>Desktop HTTP traffic analysis built on Jetpack Compose Multiplatform (Desktop).</b>
@@ -36,14 +36,14 @@
   </tbody>
 </table>
 
-
+# Information
 
 
 
 <br>
 
 <details>
-  <summary> Посмотреть скриншоты приложения / View Screenshots</summary>
+  <summary>View Screenshots</summary>
   <br>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/070dbef2-cbf0-4d0c-b49f-5eaffe8a18c9" alt="Скриншот 1" width="80%" style="margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
