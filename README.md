@@ -9,7 +9,7 @@
 <p align="start">
   <b>Desktop HTTP traffic analysis built on Jetpack Compose Multiplatform (Desktop).</b>
 </p>
-<table align="center">
+<table align="start">
   <thead>
     <tr>
       <th align="center">Операционная система / OS</th>
