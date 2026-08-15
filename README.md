@@ -38,11 +38,11 @@
 
 # Information
 Desktop HTTP traffic analysis using Kotlin/Jetpack Compose.<br><br>
-With GS.Monitor, you can:<br>
-• Instantly check the HTTP status of any website (200 OK, 404 Not Found, etc.).<br>
-• Analyze technical headers of server responses.<br>
-• View and format JSON data in a convenient, readable format.<br>
-• Check cookies set by web resources.<br>
+With GS.Monitor, you can:<br><br>
+• Instantly check the HTTP status of any website (200 OK, 404 Not Found, etc.).<br><br>
+• Analyze technical headers of server responses.<br><br>
+• View and format JSON data in a convenient, readable format.<br><br>
+• Check cookies set by web resources.<br><br>
 The application is extremely minimalist: it does not require registration or collect personal data.
 
 
