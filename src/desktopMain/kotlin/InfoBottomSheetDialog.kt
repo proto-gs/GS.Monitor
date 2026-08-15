@@ -42,7 +42,7 @@ fun InfoBottomSheetDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            // Элементы выстроены по левому краю в нужном порядке
+
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -106,7 +106,7 @@ fun InfoBottomSheetDialog(
 
 
                 TextButton(
-                    onClick = { uriHandler.openUri("https://github.com/g60373250-wq/GS.Monitor") },
+                    onClick = { uriHandler.openUri("https://github.com/proto-gs/GS.Monitor") },
                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
                     contentPadding = PaddingValues(0.dp)
                 ) {
