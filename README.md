@@ -12,8 +12,8 @@
 <table align="start">
   <thead>
     <tr>
-      <th align="center">Операционная система / OS</th>
-      <th align="center">Ссылка на скачивание / Download Link</th>
+      <th align="center">OS</th>
+      <th align="center">Download Link</th>
     </tr>
   </thead>
   <tbody>
