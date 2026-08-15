@@ -43,7 +43,13 @@ With GS.Monitor, you can:<br><br>
 • Analyze technical headers of server responses.<br><br>
 • View and format JSON data in a convenient, readable format.<br><br>
 • Check cookies set by web resources.<br><br>
-The application is extremely minimalist: it does not require registration or collect personal data.
+The application is extremely minimalist: it does not require registration or collect personal data.<br><br>
+Using GS.HTTP, you can also:<br><br>
+• Control and manage application settings<br><br>
+• Use popular HTTP methods: GET, POST, HEAD, PUT, DELETE, PATCH, OPTIONS, TRACE, CONNECT<br><br>
+• Save everything locally in the request history<br><br>
+• Find websites by entering their names and find out which domains they are located under in the browser
+
 
 
 <br>
