@@ -4,9 +4,9 @@
   <a href="https://github.com/proto-gs/GS.Monitor/releases"><img src="https://img.shields.io/badge/Release-v1.0.2-orange?style=for-the-badge" alt="Release"></a>
 </p>
 
-<h1 align="center"> GS.Monitor</h1>
+<h1 align="start"> GS.Monitor</h1>
 
-<p align="center">
+<p align="start">
   <b>Десктопный анализ HTTP-трафика, созданное на базе Jetpack Compose Multiplatform (Desktop).</b>
 </p>
 
