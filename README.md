@@ -18,16 +18,16 @@
   </thead>
   <tbody>
     <tr>
-      <td align="center"><b>Windows</b></td>
-      <td align="center">
+      <td align="start"><b>Windows</b></td>
+      <td align="start">
         <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.2/gs.monitor-1.0.2.exe">
           <img src="https://img.shields.io/badge/Setup-x64-4682b4" alt="Windows Setup">
         </a>
       </td>
     </tr>
     <tr>
-      <td align="center"><b>Linux</b></td>
-      <td align="center">
+      <td align="start"><b>Linux</b></td>
+      <td align="start">
         <a href="https://github.com/g60373250-wq/GS.Monitor/releases/download/v1.0.2/gs.monitor_1.0.2_amd64.deb">
           <img src="https://img.shields.io/badge/DebPackage-x64-d35400?logo=debian" alt="Linux Deb">
         </a>
