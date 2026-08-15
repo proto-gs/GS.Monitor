@@ -9,65 +9,6 @@
 <p align="start">
   <b>Desktop HTTP traffic analysis built on Jetpack Compose Multiplatform (Desktop).</b>
 </p>
-
----
-
-##  Language / Язык
-* [English](#-english)
-* [Русский](#-русский)
-
----
-
-## 🇺🇸 English
-
-###  Requirements
-* **Java:** JDK 17 or higher
-
-###  Development Run
-To start the application in development mode, run the following command in your terminal:
-```bash
-./gradlew run
-```
-
-###  Building the Distribution
-To build an installer (`.exe` or `.deb`) tailored for your current operating system, execute:
-```bash
-./gradlew packageDistributionForCurrentOS
-```
-
-###  Forks & Collaboration
-This project is licensed under the **MIT License**. If you have forked this repository, created an unofficial build, or implemented custom features, we would love to collaborate! 
-*  **Contact me:** `georgsmerdov@outlook.com`
-* I will gladly review your modifications and potentially integrate them into the official main ecosystem.
-
----
-
-## 🇷🇺 Русский
-
-###  Требования
-* **Java:** JDK 17 или выше
-
-###  Запуск проекта в режиме разработки
-Выполните команду в терминале:
-```bash
-./gradlew run
-```
-
-###  Сборка готового приложения (дистрибутива)
-Для создания установочного пакета (`.exe` или `.deb`) под текущую ОС выполните:
-```bash
-./gradlew packageDistributionForCurrentOS
-```
-
-###  Форки и сотрудничество
-Этот проект распространяется под лицензией **MIT License**. Если вы форкнули этот репозиторий, создали свое неофициальное приложение или внесли классные изменения — давайте сотрудничать!
-*  **Связаться со мной:** `smerdovgeorgy@yandex.ru`
-* Я с радостью рассмотрю ваши идеи и, возможно, адаптирую или применю ваши доработки в рамках официальной экосистемы.
-
----
-
-##  Скачать / Download
-
 <table align="center">
   <thead>
     <tr>
@@ -94,6 +35,10 @@ This project is licensed under the **MIT License**. If you have forked this repo
     </tr>
   </tbody>
 </table>
+
+
+
+
 
 <br>
 
