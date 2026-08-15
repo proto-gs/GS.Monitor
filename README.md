@@ -7,7 +7,7 @@
 <h1 align="start"> GS.Monitor</h1>
 
 <p align="start">
-  <b>Десктопный анализ HTTP-трафика, созданное на базе Jetpack Compose Multiplatform (Desktop).</b>
+  <b>Desktop HTTP traffic analysis built on Jetpack Compose Multiplatform (Desktop).</b>
 </p>
 
 ---
