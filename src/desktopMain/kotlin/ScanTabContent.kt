@@ -39,7 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.awt.Cursor
-
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ScrollableTabRow
 @Composable
 fun ScanTabContent(
     isDark: Boolean,
@@ -90,7 +91,10 @@ fun ScanTabContent(
                 if (lastValidUrl.isNotEmpty()) {
                     Button(
                         onClick = onOpenInspector,
-                        colors = ButtonDefaults.buttonColors(containerColor = monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = monochromeAccent,
+                            contentColor = if (isDark) Color.Black else Color.White
+                        ),
                         modifier = Modifier.padding(end = 8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                     ) {
@@ -111,15 +115,18 @@ fun ScanTabContent(
             }
         }
 
+
+
         Column(
             modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
                 .padding(top = 64.dp, start = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = selectedMethodIndex,
                 containerColor = Color.Transparent,
                 contentColor = monochromeAccent,
+                edgePadding = 0.dp,
                 divider = {},
                 indicator = { tabPositions ->
                     if (selectedMethodIndex < tabPositions.size) {
@@ -131,7 +138,7 @@ fun ScanTabContent(
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth(0.6f)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 httpMethods.forEachIndexed { index, method ->
                     val isSelected = selectedMethodIndex == index
@@ -154,7 +161,9 @@ fun ScanTabContent(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(24.dp))
+
 
             TextField(
                 value = urlInput,
@@ -174,6 +183,7 @@ fun ScanTabContent(
                 ),
                 textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
             )
+
             Spacer(modifier = Modifier.height(24.dp))
 
             if (resText.isNotEmpty()) {
@@ -223,6 +233,7 @@ fun ScanTabContent(
             }
         }
 
+
         Column(
             modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp, start = 24.dp, end = 24.dp),
@@ -231,10 +242,29 @@ fun ScanTabContent(
             Button(
                 onClick = { if (!isLoading) onRunScan() },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = if (isLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isLoading) monochromeAccent.copy(alpha = 0.5f) else monochromeAccent,
+                    contentColor = if (isDark) Color.Black else Color.White
+                ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(if (isLoading) "Examination..." else "Run scan", fontWeight = FontWeight.Bold)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            color = if (isDark) Color.Black else Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    }
+                    Text(
+                        text = if (isLoading) "Examination..." else "Run scan",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }
