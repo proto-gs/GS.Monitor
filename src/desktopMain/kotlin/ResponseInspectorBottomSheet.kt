@@ -42,7 +42,7 @@ fun ResponseInspectorBottomSheet(
     textColorPrimary: Color,
     textColorSecondary: Color,
     isDark: Boolean,
-    strings: Map<String, String>,
+    strings: AppStrings,
     lastValidUrl: String,
     uriHandler: androidx.compose.ui.platform.UriHandler,
     activeSearchTab: String,
@@ -68,7 +68,7 @@ fun ResponseInspectorBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                strings["inspector_title"] ?: "Server response data",
+                text = strings.inspectorTitle,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = dropdownTextColor
@@ -89,7 +89,7 @@ fun ResponseInspectorBottomSheet(
                 modifier = Modifier.fillMaxWidth().height(48.dp)
             ) {
                 Text(
-                    strings["btn_open_browser_emoji"] ?: "Open site in browser",
+                    text = strings.btnOpenBrowserEmoji,
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp
                 )
@@ -132,7 +132,7 @@ fun ResponseInspectorBottomSheet(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
                 label = {
-                    Text(strings["search_log_placeholder"] ?: "Search text inside log...")
+                    Text(text = strings.searchLogPlaceholder)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -155,16 +155,17 @@ fun ResponseInspectorBottomSheet(
             } else {
                 try {
                     if (currentTextData.length > 500_000) {
-                        strings["search_too_big"] ?: "Error: Log is too large"
+                        strings.searchTooBig
                     } else {
                         currentTextData.lines()
-                            .filter { it.contains(searchQuery, ignoreCase = true) }
-                            .joinToString("\n")
+                            .filter { it.contains(other = searchQuery, ignoreCase = true) }
+                            .joinToString(separator = "\n")
                     }
                 } catch (_: Exception) {
-                    strings["search_error"] ?: "error"
+                    strings.searchError
                 }
             }
+
 
             Box(
                 modifier = Modifier
@@ -184,12 +185,16 @@ fun ResponseInspectorBottomSheet(
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Text(
-                            text = if (filteredText.trim().isEmpty() && searchQuery.isNotEmpty())
-                                (strings["not_found"] ?: "Nothing found") else filteredText,
+                            text = if (filteredText.trim().isEmpty() && searchQuery.isNotEmpty()) {
+                                strings.notFound
+                            } else {
+                                filteredText
+                            },
                             color = textColorPrimary,
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
                         )
+
                     }
                 }
             }

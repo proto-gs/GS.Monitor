@@ -55,52 +55,6 @@ import androidx.compose.ui.layout.ContentScale
 
 
 
-
-const val VERSION = "1.0.3"
-val currentUserId = System.getProperty("user.name") ?: "unknown_user"
-
-
-private fun getHistoryFile(): java.io.File {
-    val userHome = System.getProperty("user.home") ?: ""
-
-    val appDir = java.io.File(userHome, ".gs_monitor")
-    if (!appDir.exists()) {
-        appDir.mkdirs()
-    }
-    return java.io.File(appDir, "scan_history.txt")
-}
-
-fun saveToKotlinHistory(text: String) {
-    runCatching {
-        val file = getHistoryFile()
-        file.appendText("$text\n", Charsets.UTF_8)
-    }.onFailure { it.printStackTrace() }
-}
-
-fun loadKotlinHistory(): List<String> {
-    return runCatching {
-        val file = getHistoryFile()
-        if (file.exists()) file.readLines(Charsets.UTF_8) else emptyList()
-    }.getOrDefault(emptyList())
-}
-
-fun clearKotlinHistoryFile() {
-    runCatching {
-        val file = getHistoryFile()
-        if (file.exists()) {
-            file.writeText("", Charsets.UTF_8)
-        }
-    }.onFailure { it.printStackTrace() }
-}
-
-
-
-
-
-val globalHttpClient = OkHttpClient.Builder()
-    .connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
-    .build()
-
 fun main() {
 
     application {

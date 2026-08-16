@@ -43,7 +43,8 @@ fun HomeTabContent(
     isMenuExpanded: Boolean,
     onMenuDismiss: () -> Unit,
     onOpenInfo: () -> Unit,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    strings: AppStrings,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -69,15 +70,15 @@ fun HomeTabContent(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 DropdownMenuItem(
-                    text = { Text("Information", color = dropdownTextColor) },
+                    text = { Text(text = strings.home_info, color = dropdownTextColor) },
                     onClick = { onMenuDismiss(); onOpenInfo() }
                 )
                 DropdownMenuItem(
-                    text = { Text("Developer's website", color = dropdownTextColor) },
+                    text = { Text(text = strings.home_site, color = dropdownTextColor) },
                     onClick = { onMenuDismiss(); uriHandler.openUri("https://gs-ht.ru") }
                 )
                 DropdownMenuItem(
-                    text = { Text("Settings", color = dropdownTextColor) },
+                    text = { Text(text = strings.home_settings, color = dropdownTextColor) },
                     onClick = { onMenuDismiss(); onOpenSettings() }
                 )
             }
@@ -96,7 +97,7 @@ fun HomeTabContent(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource("ic_gs_ht.png"), // Используем строку для Desktop
+                    painter = painterResource("ic_gs_ht.png"),
                     contentDescription = "Аватар",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

@@ -28,7 +28,8 @@ fun HistoryDialog(
     monochromeAccent: Color,
     monochromeSecondary: Color,
     onClearHistory: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    strings: AppStrings,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -38,10 +39,10 @@ fun HistoryDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Scan history", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = dropdownTextColor)
+                Text(text = strings.history_scan, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = dropdownTextColor)
                 if (scanHistoryList.isNotEmpty()) {
                     TextButton(onClick = onClearHistory) {
-                        Text("Clear", color = monochromeSecondary, fontSize = 12.sp)
+                        Text(text = strings.clear_history, color = monochromeSecondary, fontSize = 12.sp)
                     }
                 }
             }
@@ -53,7 +54,7 @@ fun HistoryDialog(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     if (scanHistoryList.isEmpty()) {
-                        Text("The check history is empty", color = Color.Gray, fontSize = 15.sp)
+                        Text(text = strings.history_empty, color = Color.Gray, fontSize = 15.sp)
                     } else {
                         scanHistoryList.forEach { logItem ->
                             Text(logItem, color = dropdownTextColor, fontSize = 13.sp, fontFamily = FontFamily.Monospace)
@@ -64,7 +65,7 @@ fun HistoryDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Ready", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                Text(text = strings.ready_history, color = monochromeAccent, fontWeight = FontWeight.Bold)
             }
         },
         containerColor = dropdownBgColor,

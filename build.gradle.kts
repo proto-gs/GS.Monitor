@@ -91,6 +91,3 @@ tasks.register<Tar>("packageTarGz") {
 
     from(layout.buildDirectory.dir("compose/binaries/main-release/app"))
 }
-
-
-

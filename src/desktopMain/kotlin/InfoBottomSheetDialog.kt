@@ -37,7 +37,8 @@ fun InfoBottomSheetDialog(
     dropdownTextColor: Color,
     monochromeAccent: Color,
     uriHandler: androidx.compose.ui.platform.UriHandler,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    strings: AppStrings,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -49,7 +50,7 @@ fun InfoBottomSheetDialog(
             ) {
 
                 Text(
-                    text = "Application information",
+                    text = strings.app_info,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = dropdownTextColor
@@ -85,9 +86,21 @@ fun InfoBottomSheetDialog(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text("Developer: Georgy Smerdov", fontSize = 14.sp, color = dropdownTextColor)
-                Text("Version: $version", fontSize = 14.sp, color = dropdownTextColor)
-                Text("Downloaded: GitHub", fontSize = 14.sp, color = dropdownTextColor)
+                Text(
+                    text = strings.dev_info,
+                    fontSize = 14.sp,
+                    color = dropdownTextColor
+                )
+                Text(
+                    "${strings.version_info}: $version",
+                    fontSize = 14.sp,
+                    color = dropdownTextColor
+                )
+                Text(
+                    text = strings.download_info,
+                    fontSize = 14.sp,
+                    color = dropdownTextColor
+                )
 
                 Box(
                     modifier = Modifier
@@ -97,7 +110,7 @@ fun InfoBottomSheetDialog(
                 )
 
                 Text(
-                    text = "Source code and development",
+                    text = strings.source_code_info,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray,
@@ -116,11 +129,15 @@ fun InfoBottomSheetDialog(
                     ) {
                         Icon(
                             painter = painterResource("github.png"),
-                            contentDescription = "GitHub",
+                            contentDescription = strings.github_info_info,
                             tint = dropdownTextColor,
                             modifier = Modifier.size(18.dp)
                         )
-                        Text("Project repository on GitHub ↗", fontSize = 13.sp, color = monochromeAccent)
+                        Text(
+                            text = strings.github_info,
+                            fontSize = 13.sp,
+                            color = monochromeAccent
+                        )
                     }
                 }
 
@@ -133,7 +150,7 @@ fun InfoBottomSheetDialog(
 
 
                 Text(
-                    text = "Documentation",
+                    text = strings.document_info,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray,
@@ -146,7 +163,11 @@ fun InfoBottomSheetDialog(
                     modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR))),
                     contentPadding = PaddingValues(0.dp)
                 ) {
-                    Text("Privacy policy ↗", fontSize = 13.sp, color = monochromeAccent)
+                    Text(
+                        text = strings.privacy_policy_info,
+                        fontSize = 13.sp,
+                        color = monochromeAccent
+                    )
                 }
             }
         },
@@ -155,7 +176,11 @@ fun InfoBottomSheetDialog(
                 onClick = onDismiss,
                 modifier = Modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
             ) {
-                Text("Ready", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                Text(
+                    text = strings.ready_info,
+                    color = monochromeAccent,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         containerColor = dropdownBgColor,

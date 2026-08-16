@@ -19,10 +19,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -39,8 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.awt.Cursor
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ScrollableTabRow
+
 @Composable
 fun ScanTabContent(
     isDark: Boolean,
@@ -58,15 +58,18 @@ fun ScanTabContent(
     safeTextColor: Color,
     isLoading: Boolean,
     lastValidUrl: String,
+    strings: AppStrings,
     onOpenHistory: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenInspector: () -> Unit,
-    onRunScan: () -> Unit
+    onRunScan: () -> Unit,
+    uriHandler: androidx.compose.ui.platform.UriHandler,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
             .background(if (isDark) Color(0xFF0A0A0A) else Color(0xFFFAFAFA))
     ) {
+        // Верхняя панель с кнопками истории и настроек
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 8.dp),
@@ -80,7 +83,7 @@ fun ScanTabContent(
                 Box(modifier = Modifier.size(24.dp), contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Filled.History,
-                        contentDescription = "Story",
+                        contentDescription = strings.story_scan,
                         tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
                         modifier = Modifier.size(22.dp)
                     )
@@ -98,7 +101,10 @@ fun ScanTabContent(
                         modifier = Modifier.padding(end = 8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                     ) {
-                        Text("Answer", fontSize = 12.sp)
+                        Text(
+                            text = strings.inspector_scan,
+                            fontSize = 12.sp
+                        )
                     }
                 }
                 IconButton(
@@ -107,7 +113,7 @@ fun ScanTabContent(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
+                        contentDescription = strings.scan_settings,
                         tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
                         modifier = Modifier.size(24.dp)
                     )
@@ -115,11 +121,10 @@ fun ScanTabContent(
             }
         }
 
-
-
+        // Основной контент (Табы, поле ввода, карточка результата)
         Column(
             modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
-                .padding(top = 64.dp, start = 24.dp, end = 24.dp),
+                .padding(top = 64.dp, start = 24.dp, end = 24.dp, bottom = 90.dp),
             horizontalAlignment = Alignment.Start
         ) {
             ScrollableTabRow(
@@ -164,12 +169,14 @@ fun ScanTabContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-
             TextField(
                 value = urlInput,
                 onValueChange = onUrlInputChange,
                 placeholder = {
-                    Text("Check URL", color = Color.Gray.copy(alpha = 0.6f))
+                    Text(
+                        text = strings.check_scan,
+                        color = Color.Gray.copy(alpha = 0.6f)
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -186,6 +193,7 @@ fun ScanTabContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Карточка с результатами запроса
             if (resText.isNotEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -233,12 +241,39 @@ fun ScanTabContent(
             }
         }
 
-
+        // Нижняя закрепленная панель с кнопками (кнопка открытия сайта и кнопка запуска сканирования)
         Column(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp, start = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Кнопка открытия сайта появляется ТОЛЬКО тогда, когда есть результат запроса
+            if (resText.isNotEmpty()) {
+                Button(
+                    onClick = {
+                        if (lastValidUrl.isNotEmpty()) {
+                            uriHandler.openUri(lastValidUrl)
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = monochromeAccent,
+                        contentColor = if (isDark) Color.Black else Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                ) {
+                    Text(
+                        text = strings.btnOpenBrowserEmoji,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             Button(
                 onClick = { if (!isLoading) onRunScan() },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -260,7 +295,7 @@ fun ScanTabContent(
                         )
                     }
                     Text(
-                        text = if (isLoading) "Examination..." else "Run scan",
+                        text = if (isLoading) strings.analysis_scan else strings.run_scan,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )

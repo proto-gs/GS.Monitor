@@ -58,6 +58,7 @@ fun SearchTabContent(
     isSearchLoading: Boolean,
     onOpenHistory: () -> Unit,
     onRunSearch: () -> Unit,
+    strings: AppStrings,
     onSelectSite: (String) -> Unit
 ) {
     var selectedZoneIndex by remember { mutableStateOf(0) }
@@ -94,14 +95,14 @@ fun SearchTabContent(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.History,
-                        contentDescription = "Story",
+                        contentDescription = strings.story_searches,
                         tint = if (isDark) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
                         modifier = Modifier.size(22.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Search by matches",
+                    text = strings.searches_matches,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray,
@@ -114,7 +115,7 @@ fun SearchTabContent(
                 onValueChange = onSearchQueryChange,
                 placeholder = {
                     Text(
-                        text = "Enter a keyword (e.g. example)",
+                        text = strings.example_keyword,
                         color = Color.Gray.copy(alpha = 0.6f)
                     )
                 },
@@ -131,7 +132,7 @@ fun SearchTabContent(
                 textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Normal)
             )
 
-            if (searchResultsList.isNotEmpty() && !searchResultsList.contains("Nothing found")) {
+            if (searchResultsList.isNotEmpty() && !searchResultsList.contains(strings.notFound)) {
                 ScrollableTabRow(
                     selectedTabIndex = selectedZoneIndex,
                     containerColor = Color.Transparent,
@@ -156,7 +157,7 @@ fun SearchTabContent(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Sites found (${filteredResults.size})",
+                            text = "${strings.sites_found} (${filteredResults.size})",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Gray,
@@ -192,7 +193,7 @@ fun SearchTabContent(
                                             .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                                             .pointerInput(Unit) {
                                                 detectTapGestures(onTap = {
-                                                    if (site != "Nothing found") {
+                                                    if (site != strings.notFound) {
                                                         onSelectSite(site)
                                                     }
                                                 })
@@ -217,7 +218,10 @@ fun SearchTabContent(
                 colors = ButtonDefaults.buttonColors(containerColor = if (isSearchLoading) Color.Gray else monochromeAccent, contentColor = if (isDark) Color.Black else Color.White),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(if (isSearchLoading) "Search." else "Find matches", fontWeight = FontWeight.Bold)
+                Text(
+                    text = if (isSearchLoading) strings.searchLoading else strings.findMatches,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

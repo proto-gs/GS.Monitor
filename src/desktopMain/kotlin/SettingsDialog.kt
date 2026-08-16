@@ -50,13 +50,15 @@ fun SettingsDialog(
     onUserAgentChange: (String) -> Unit,
     onOpenThemeDialog: () -> Unit,
     onClearData: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    strings: AppStrings,
+    onLanguageDialogOpen: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Application settings",
+                text = strings.application_settings,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 color = dropdownTextColor
@@ -70,13 +72,30 @@ fun SettingsDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Network and Connectivity", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text(
+                    text = strings.network_and_connectivity,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = monochromeSecondary
+                )
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Auto-redirect", color = dropdownTextColor, fontSize = 14.sp)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = strings.auto_redirect,
+                            color = dropdownTextColor,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = strings.common_redirect,
+                            color = Color.Gray,
+                            fontSize = 11.sp
+                        )
+                    }
                     Switch(
                         checked = followRedirectsSetting,
                         onCheckedChange = onFollowRedirectsChange,
@@ -88,7 +107,11 @@ fun SettingsDialog(
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Request timeout: ${requestTimeoutSetting}с", color = dropdownTextColor, fontSize = 14.sp)
+                Text(
+                    text = "${strings.requesttimeout} ${requestTimeoutSetting}с",
+                    color = dropdownTextColor,
+                    fontSize = 14.sp
+                )
                 Slider(
                     value = requestTimeoutSetting.toFloat(),
                     onValueChange = { onRequestTimeoutChange(it.toInt()) },
@@ -101,7 +124,12 @@ fun SettingsDialog(
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Security and SSL", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text(
+                    text = strings.securityandssl,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = monochromeSecondary
+                )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -109,8 +137,16 @@ fun SettingsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Check SSL", color = dropdownTextColor, fontSize = 14.sp)
-                        Text("(Strict certificate verification)", color = Color.Gray, fontSize = 11.sp)
+                        Text(
+                            text = strings.checkssl,
+                            color = dropdownTextColor,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = strings.strictcertificateverification,
+                            color = Color.Gray,
+                            fontSize = 11.sp
+                        )
                     }
                     Switch(
                         checked = verifySslSetting,
@@ -128,8 +164,16 @@ fun SettingsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Ignore SSL errors", color = dropdownTextColor, fontSize = 14.sp)
-                        Text("(self-signed certificates)", color = Color.Gray, fontSize = 11.sp)
+                        Text(
+                            text = strings.ignoresslerrors,
+                            color = dropdownTextColor,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = strings.self_signed_certificates,
+                            color = Color.Gray,
+                            fontSize = 11.sp
+                        )
                     }
                     Switch(
                         checked = ignoreSslErrorsSetting,
@@ -147,12 +191,20 @@ fun SettingsDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("User-Agent", color = dropdownTextColor, fontSize = 14.sp)
+                    Text(
+                        text = strings.user_agent,
+                        color = dropdownTextColor,
+                        fontSize = 14.sp
+                    )
                     TextButton(
                         onClick = { onUserAgentChange(defaultUserAgent) },
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text("Default", fontSize = 12.sp, color = monochromeAccent)
+                        Text(
+                            text = strings.default,
+                            fontSize = 12.sp,
+                            color = monochromeAccent
+                        )
                     }
                 }
                 TextField(
@@ -168,7 +220,12 @@ fun SettingsDialog(
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Registration", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text(
+                    text = strings.registration,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = monochromeSecondary
+                )
 
                 Button(
                     onClick = onOpenThemeDialog,
@@ -176,11 +233,34 @@ fun SettingsDialog(
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = monochromeAccent, contentColor = if (isDark) Color.Black else Color.White)
                 ) {
-                    Text("Change the design theme", fontSize = 12.sp)
+                    Text(
+                        text = strings.change_the_design_theme,
+                        fontSize = 12.sp
+                    )
+                }
+                Button(
+                    onClick = { onLanguageDialogOpen() },
+                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                    shape = RoundedCornerShape(size = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = monochromeAccent,
+                        contentColor = if (isDark) Color.Black else Color.White
+                    )
+                ) {
+                    Text(
+                        text = strings.langTitle,
+                        fontSize = 12.sp
+                    )
                 }
 
+
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Data and history", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = monochromeSecondary)
+                Text(
+                    text = strings.data_and_history,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = monochromeSecondary
+                )
 
                 Button(
                     onClick = onClearData,
@@ -188,13 +268,21 @@ fun SettingsDialog(
                     colors = ButtonDefaults.buttonColors(containerColor = if (isDark) Color(0xFF333333) else Color(0xFFCCCCCC), contentColor = dropdownTextColor),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Clear history and input", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = strings.clear_history_and_input,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Ready", color = monochromeAccent, fontWeight = FontWeight.Bold)
+                Text(
+                    text = strings.ready_settings,
+                    color = monochromeAccent,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         containerColor = dropdownBgColor,

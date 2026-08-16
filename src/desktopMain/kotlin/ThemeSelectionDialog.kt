@@ -17,31 +17,47 @@ fun ThemeSelectionDialog(
     dropdownBgColor: Color,
     dropdownTextColor: Color,
     monochromeAccent: Color,
+    strings: AppStrings,
     onThemeChange: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select a topic", color = dropdownTextColor) },
+        title = { Text(
+            text = strings.select_theme_topic,
+            color = dropdownTextColor
+        ) },
         text = {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = appThemeSetting == "system", onClick = { onThemeChange("system"); onDismiss() }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                    Text("As in the system", color = dropdownTextColor)
+                    Text(
+                        text = strings.theme_system,
+                        color = dropdownTextColor
+                    )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = appThemeSetting == "light", onClick = { onThemeChange("light"); onDismiss() }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                    Text("Light", color = dropdownTextColor)
+                    Text(
+                        text = strings.theme_light,
+                        color = dropdownTextColor
+                    )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = appThemeSetting == "dark", onClick = { onThemeChange("dark"); onDismiss() }, colors = RadioButtonDefaults.colors(selectedColor = monochromeAccent))
-                    Text("Dark", color = dropdownTextColor)
+                    Text(
+                        text = strings.theme_dark,
+                        color = dropdownTextColor
+                    )
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = monochromeAccent)
+                Text(
+                    text = strings.cancel_theme,
+                    color = monochromeAccent
+                )
             }
         },
         containerColor = dropdownBgColor,

@@ -1,4 +1,3 @@
-
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -22,8 +21,8 @@ import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.util.prefs.Preferences
 import java.util.concurrent.TimeUnit
+import java.util.prefs.Preferences
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
@@ -39,24 +38,29 @@ fun MainAppScreen(
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
-    val prefs = remember { Preferences.userNodeForPackage(object {}::class.java) }
+    val palette = MaterialTheme.colorScheme
 
+
+
+    val prefs = remember { java.util.prefs.Preferences.userRoot().node("app_prefs") }
     val defaultUserAgent = "GS.Monitor/1.0"
 
-    val strings = mapOf(
-        "status_error" to "Error",
-        "status_invalid" to "Invalid input",
-        "status_ssl" to "Https secure",
-        "status_http" to "Http insecure",
-        "status_no_server" to "Server unreachable",
-        "cookies_empty" to "No cookies found",
-        "inspector_title" to "Server response data",
-        "btn_open_browser_emoji" to "Open site in browser",
-        "search_log_placeholder" to "Search text inside log...",
-        "search_too_big" to "Error: Log is too large",
-        "search_error" to "error",
-        "not_found" to "Nothing found"
-    )
+
+
+
+    var currentLanguage by remember {
+        mutableStateOf(prefs.get("app_lang", "ru"))
+    }
+
+
+    val strings = remember(currentLanguage) {
+        getStringsForLanguage(currentLanguage)
+    }
+
+
+
+
+
     val version = "1.0.3"
 
     var fadeVal by remember { mutableStateOf(1.0f) }
@@ -68,6 +72,7 @@ fun MainAppScreen(
         ),
         label = "global_screen_fade"
     )
+    var isLanguageOpen by remember { mutableStateOf(false) }
 
     var isBottomSheetOpen by remember { mutableStateOf(false) }
     var isWelcomeSettingsOpen by remember { mutableStateOf(false) }
@@ -161,7 +166,8 @@ fun MainAppScreen(
                             synchronized(activeDomains) {
                                 activeDomains.add(domain)
                             }
-                        } catch (_: Exception) {}
+                        } catch (_: Exception) {
+                        }
                     }
                 }.joinAll()
 
@@ -195,12 +201,13 @@ fun MainAppScreen(
                 (url.startsWith("http:/") && !url.startsWith("http://"))
 
         if (url.isEmpty() || hasSpaces || isInvalidProtocol) {
-            resText = strings["status_error"] ?: "Error"
+            resText = strings.statusError
             resTextColor = monochromeAccent
-            safeText = strings["status_invalid"] ?: "Invalid input"
+            safeText = strings.statusInvalid
             safeTextColor = monochromeSecondary
             isLoading = false
         } else {
+
             isLoading = true
             resText = ""
             safeText = ""
@@ -220,15 +227,29 @@ fun MainAppScreen(
                     if (ignoreSslErrorsSetting && !verifySslSetting) {
                         try {
                             val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-                                override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
-                                override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {}
+                                override fun checkClientTrusted(
+                                    chain: Array<java.security.cert.X509Certificate>,
+                                    authType: String
+                                ) {
+                                }
+
+                                override fun checkServerTrusted(
+                                    chain: Array<java.security.cert.X509Certificate>,
+                                    authType: String
+                                ) {
+                                }
+
                                 override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
                             })
                             val sslContext = SSLContext.getInstance("Ssl")
                             sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-                            clientBuilder.sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
+                            clientBuilder.sslSocketFactory(
+                                sslContext.socketFactory,
+                                trustAllCerts[0] as X509TrustManager
+                            )
                             clientBuilder.hostnameVerifier { _, _ -> true }
-                        } catch (_: Exception) {}
+                        } catch (_: Exception) {
+                        }
                     }
 
                     val client = clientBuilder.build()
@@ -258,30 +279,35 @@ fun MainAppScreen(
                         resText = "HTTP $code"
                         resTextColor = monochromeAccent
                         val isHttps = response.request.url.isHttps
-                        safeText = if (isHttps) strings["status_ssl"] ?: "" else strings["status_http"] ?: ""
+                        safeText = if (isHttps) strings.statusSsl else strings.statusHttp
                         safeTextColor = monochromeSecondary
                         lastValidUrl = fullUrl
                         responseBodyText = response.body?.string() ?: ""
                         responseHeadersText = response.headers.joinToString("\n") { "${it.first}: ${it.second}" }
                         val cookies = response.headers("Set-Cookie")
-                        responseCookiesText = if (cookies.isNotEmpty()) cookies.joinToString("\n") else strings["cookies_empty"] ?: ""
+                        responseCookiesText =
+                            if (cookies.isNotEmpty()) cookies.joinToString(separator = "\n") else strings.cookiesEmpty
 
-                        scanHistoryList.add(0, "[$selectedMethod] $fullUrl -> HTTP $code (VerifySSL: $verifySslSetting)")
+                        scanHistoryList.add(
+                            0,
+                            "[$selectedMethod] $fullUrl -> HTTP $code (VerifySSL: $verifySslSetting)"
+                        )
                         saveHistoryToPrefs()
                     }
                 } catch (_: IllegalArgumentException) {
-                    resText = strings["status_error"] ?: "Error"
+                    resText = strings.statusError
                     resTextColor = monochromeAccent
-                    safeText = strings["status_invalid"] ?: "Invalid input"
+                    safeText = strings.statusInvalid
                     safeTextColor = monochromeSecondary
                 } catch (_: IOException) {
-                    resText = strings["status_error"] ?: "Error"
+                    resText = strings.statusError
                     resTextColor = monochromeAccent
-                    safeText = strings["status_no_server"] ?: "Server unreachable"
+                    safeText = strings.statusNoServer
                     safeTextColor = monochromeSecondary
                 } finally {
                     isLoading = false
                 }
+
             }
         }
     }
@@ -300,9 +326,11 @@ fun MainAppScreen(
                     isMenuExpanded = isMenuExpanded,
                     onMenuDismiss = { isMenuExpanded = false },
                     onOpenInfo = { isBottomSheetOpen = true },
-                    onOpenSettings = { isWelcomeSettingsOpen = true }
+                    onOpenSettings = { isWelcomeSettingsOpen = true },
+                    strings = strings
                 )
             }
+
             "scan" -> {
                 ScanTabContent(
                     isDark = isDark,
@@ -323,9 +351,12 @@ fun MainAppScreen(
                     onOpenHistory = { isHistoryOpen = true },
                     onOpenSettings = { isScanSettingsOpen = true },
                     onOpenInspector = { isResponseInspectorSheetOpen = true },
-                    onRunScan = runScan
+                    onRunScan = runScan,
+                    strings = strings,
+                    uriHandler = uriHandler,
                 )
             }
+
             "search" -> {
                 SearchTabContent(
                     isDark = isDark,
@@ -342,7 +373,8 @@ fun MainAppScreen(
                     onSelectSite = { site ->
                         urlInput = site
                         onTabChange("scan")
-                    }
+                    },
+                    strings = strings
                 )
             }
         }
@@ -355,7 +387,8 @@ fun MainAppScreen(
             dropdownTextColor = dropdownTextColor,
             monochromeAccent = monochromeAccent,
             uriHandler = uriHandler,
-            onDismiss = { isBottomSheetOpen = false }
+            onDismiss = { isBottomSheetOpen = false },
+            strings = strings,
         )
     }
 
@@ -388,6 +421,8 @@ fun MainAppScreen(
                     prefs.putBoolean("verify_ssl", false)
                 }
             },
+            strings = strings,
+            onLanguageDialogOpen = { isLanguageOpen = true }, // <--- ЗАПЯТАЯ ИСПРАВЛЕНА ТУТ
             customUserAgentSetting = customUserAgentSetting,
             defaultUserAgent = defaultUserAgent,
             onUserAgentChange = {
@@ -412,6 +447,7 @@ fun MainAppScreen(
         )
     }
 
+
     if (isHistoryOpen) {
         HistoryDialog(
             scanHistoryList = scanHistoryList,
@@ -423,7 +459,8 @@ fun MainAppScreen(
                 scanHistoryList.clear()
                 saveHistoryToPrefs()
             },
-            onDismiss = { isHistoryOpen = false }
+            onDismiss = { isHistoryOpen = false },
+            strings = strings
         )
     }
 
@@ -434,9 +471,30 @@ fun MainAppScreen(
             dropdownTextColor = dropdownTextColor,
             monochromeAccent = monochromeAccent,
             onThemeChange = onThemeChange,
-            onDismiss = { isThemeDialogOpen = false }
+            onDismiss = { isThemeDialogOpen = false },
+            strings = strings,
         )
     }
+
+
+
+    LanguageDialog(
+        isOpen = isLanguageOpen,
+        currentLanguage = currentLanguage,
+        onLanguageSelected = { selectedLang ->
+            currentLanguage = selectedLang
+        },
+        onDismiss = { isLanguageOpen = false },
+        strings = strings,
+        backgroundColor = palette.surfaceContainer,
+        textPrimaryColor = palette.onSurface,
+        textSecondaryColor = palette.onSurfaceVariant
+    )
+
+
+
+
+
 
     if (isResponseInspectorSheetOpen) {
         ResponseInspectorBottomSheet(
@@ -462,6 +520,9 @@ fun MainAppScreen(
         )
     }
 }
+
+
+
 
 
 
