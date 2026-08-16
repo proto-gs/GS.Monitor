@@ -69,7 +69,7 @@ fun ScanTabContent(
         modifier = Modifier.fillMaxSize()
             .background(if (isDark) Color(0xFF0A0A0A) else Color(0xFFFAFAFA))
     ) {
-        // Верхняя панель с кнопками истории и настроек
+
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 8.dp),
@@ -121,7 +121,7 @@ fun ScanTabContent(
             }
         }
 
-        // Основной контент (Табы, поле ввода, карточка результата)
+
         Column(
             modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
                 .padding(top = 64.dp, start = 24.dp, end = 24.dp, bottom = 90.dp),
@@ -193,7 +193,7 @@ fun ScanTabContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Карточка с результатами запроса
+
             if (resText.isNotEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -241,7 +241,7 @@ fun ScanTabContent(
             }
         }
 
-        // Нижняя закрепленная панель с кнопками (кнопка открытия сайта и кнопка запуска сканирования)
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -249,7 +249,7 @@ fun ScanTabContent(
                 .padding(bottom = 24.dp, start = 24.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Кнопка открытия сайта появляется ТОЛЬКО тогда, когда есть результат запроса
+
             if (resText.isNotEmpty()) {
                 Button(
                     onClick = {
